@@ -1,10 +1,22 @@
-# Gemstracker OAuth2 server
-Implementation of the [League OAuth2 server](https://oauth2.thephpleague.com/) for Gemstracker, using [Doctrine](https://www.doctrine-project.org/) for entities.
+# Gemstracker HL7 FHIR API
+[HL7 Fhir](https://www.hl7.org/fhir/) resource server. Currently READ ONLY 
 
 ## Installation
 ```bash
- composer require gemstracker\gems-oauth2
+ composer require gemstracker\gems-fhir-api
 ```
 
 ## Configuration
-Use the supplied ConfigProvider in your config to add all Dependencies and actions.
+Add the ```\Gems\Api\Fhir\ConfigProvider::class``` to your config
+
+## Resources
+- [Patients](https://www.hl7.org/fhir/patient.html)
+- [Appointments](https://www.hl7.org/fhir/appointment.html)
+- [Episode of care](https://www.hl7.org/fhir/episodeofcare.html)
+- [Location](https://www.hl7.org/fhir/location.html)
+- [Organization](https://www.hl7.org/fhir/organization.html)
+- [Related-person](https://www.hl7.org/fhir/relatedperson.html)
+- [Questionnaire](https://www.hl7.org/fhir/questionnaire.html)
+- [Questionnaire task](https://www.hl7.org/fhir/task.html)
+- [Questionnaire response](https://www.hl7.org/fhir/questionnaireresponse.html)
+- [Care plan](https://www.hl7.org/fhir/careplan.html)
