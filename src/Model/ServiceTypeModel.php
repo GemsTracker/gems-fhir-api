@@ -4,7 +4,9 @@
 namespace Gems\Api\Fhir\Model;
 
 
-class ServiceTypeModel extends \Gems_Model_JoinModel
+use Gems\Model\JoinModel;
+
+class ServiceTypeModel extends JoinModel
 {
     public function __construct()
     {

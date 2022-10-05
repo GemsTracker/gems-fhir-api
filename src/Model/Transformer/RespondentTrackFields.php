@@ -2,23 +2,24 @@
 
 namespace Gems\Api\Fhir\Model\Transformer;
 
+use Gems\Model\JoinModel;
+use MUtil\Model\TableModel;
+use MUtil\Model\UnionModel;
+
 trait RespondentTrackFields
 {
     protected function getDisplayValue(array $trackFieldInfo): ?string
     {
-        switch ($trackFieldInfo['gtf_field_type']) {
-            case 'caretaker':
-                return $this->getCaretakerName($trackFieldInfo['gr2t2f_value']);
-            case 'location':
-                return $this->getLocationName($trackFieldInfo['gr2t2f_value']);
-            default:
-                return null;
-        }
+        return match ($trackFieldInfo['gtf_field_type']) {
+            'caretaker' => $this->getCaretakerName($trackFieldInfo['gr2t2f_value']),
+            'location' => $this->getLocationName($trackFieldInfo['gr2t2f_value']),
+            default => null,
+        };
     }
 
     protected function getCaretakerName(int $caretakerId): ?string
     {
-        $model = new \MUtil_Model_TableModel('gems__agenda_staff');
+        $model = new TableModel('gems__agenda_staff');
         $result = $model->loadFirst(['gas_id_staff' => $caretakerId]);
         if ($result) {
             return $result['gas_name'];
@@ -28,7 +29,7 @@ trait RespondentTrackFields
 
     protected function getLocationName(int $locationId): ?string
     {
-        $model = new \MUtil_Model_TableModel('gems__locations');
+        $model = new TableModel('gems__locations');
         $result = $model->loadFirst(['glo_id_location' => $locationId]);
         if ($result) {
             return $result['glo_name'];
@@ -47,11 +48,11 @@ trait RespondentTrackFields
         );
     }
 
-    protected function getTrackfieldModel(): \MUtil_Model_UnionModel
+    protected function getTrackfieldModel(): UnionModel
     {
-        $unionModel = new \MUtil_Model_UnionModel('respondentTrackFieldData');
+        $unionModel = new UnionModel('respondentTrackFieldData');
 
-        $trackFieldsModel = new \Gems_Model_JoinModel('trackFieldData', 'gems__respondent2track', 'gr2t', false);
+        $trackFieldsModel = new JoinModel('trackFieldData', 'gems__respondent2track', 'gr2t', false);
         $trackFieldsModel->addTable('gems__track_fields',
             [
                 'gr2t_id_track' => 'gtf_id_track'
@@ -75,7 +76,7 @@ trait RespondentTrackFields
 
         $unionModel->addUnionModel($trackFieldsModel, null);
 
-        $trackAppointmentsModel = new \Gems_Model_JoinModel('trackAppointmentData', 'gems__respondent2track', 'gr2t', false);
+        $trackAppointmentsModel = new JoinModel('trackAppointmentData', 'gems__respondent2track', 'gr2t', false);
         $trackAppointmentsModel->addTable('gems__track_appointments',
             [
                 'gr2t_id_track' => 'gtap_id_track'

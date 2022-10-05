@@ -3,7 +3,10 @@
 namespace Gems\Api\Fhir\Model\Transformer;
 
 
-class QuestionnaireResponseItemsTransformer extends \MUtil_Model_ModelTransformerAbstract
+use Gems\Tracker\TrackerInterface;
+use MUtil\Model\ModelTransformerAbstract;
+
+class QuestionnaireResponseItemsTransformer extends ModelTransformerAbstract
 {
     /**
      * @var string Language
@@ -11,11 +14,11 @@ class QuestionnaireResponseItemsTransformer extends \MUtil_Model_ModelTransforme
     protected string $language;
 
     /**
-     * @var \Gems_Tracker
+     * @var TrackerInterface
      */
-    protected \Gems_Tracker $tracker;
+    protected TrackerInterface $tracker;
 
-    public function __construct(\Gems_Tracker $tracker, string $language)
+    public function __construct(TrackerInterface $tracker, string $language)
     {
         $this->tracker = $tracker;
         $this->language = $language;
@@ -75,7 +78,7 @@ class QuestionnaireResponseItemsTransformer extends \MUtil_Model_ModelTransforme
         return $items;
     }
 
-    public function transformLoad(\MUtil_Model_ModelAbstract $model, array $data, $new = false, $isPostData = false): array
+    public function transformLoad(ModelAbstract $model, array $data, $new = false, $isPostData = false): array
     {
         $tokensBySource = [];
         $sourceSurveyIds = [];

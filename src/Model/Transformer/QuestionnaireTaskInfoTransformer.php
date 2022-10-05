@@ -2,13 +2,14 @@
 
 namespace Gems\Api\Fhir\Model\Transformer;
 
-
 use Gems\Api\Fhir\Endpoints;
+use MUtil\Model\ModelAbstract;
+use MUtil\Model\ModelTransformerAbstract;
 
-class QuestionnaireTaskInfoTransformer extends \MUtil_Model_ModelTransformerAbstract
+class QuestionnaireTaskInfoTransformer extends ModelTransformerAbstract
 {
     /**
-     * @var null
+     * @var ?string
      */
     protected ?string $currentUri;
 
@@ -41,7 +42,7 @@ class QuestionnaireTaskInfoTransformer extends \MUtil_Model_ModelTransformerAbst
         return $this->respondentTrackReceptionCodes;
     }
 
-    public function transformFilter(\MUtil_Model_ModelAbstract $model, array $filter): array
+    public function transformFilter(ModelAbstract $model, array $filter): array
     {
         if (isset($filter['roundDescription'])) {
             $filter['gto_round_description'] = $filter['roundDescription'];
@@ -88,7 +89,7 @@ class QuestionnaireTaskInfoTransformer extends \MUtil_Model_ModelTransformerAbst
         return $filter;
     }
 
-    public function transformLoad(\MUtil_Model_ModelAbstract $model, array $data, $new = false, $isPostData = false): array
+    public function transformLoad(ModelAbstract $model, array $data, $new = false, $isPostData = false): array
     {
         foreach($data as $key=>$row) {
             $info = [];

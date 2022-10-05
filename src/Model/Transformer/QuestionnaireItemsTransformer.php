@@ -2,8 +2,12 @@
 
 namespace Gems\Api\Fhir\Model\Transformer;
 
+use Gems\Tracker\Source\SourceInterface;
+use Gems\Tracker\TrackerInterface;
+use MUtil\Model\ModelAbstract;
+use MUtil\Model\ModelTransformerAbstract;
 
-class QuestionnaireItemsTransformer extends \MUtil_Model_ModelTransformerAbstract
+class QuestionnaireItemsTransformer extends ModelTransformerAbstract
 {
     /**
      * @var string Language
@@ -11,11 +15,11 @@ class QuestionnaireItemsTransformer extends \MUtil_Model_ModelTransformerAbstrac
     protected string $language;
 
     /**
-     * @var \Gems_Tracker
+     * @var TrackerInterface
      */
-    protected \Gems_Tracker $tracker;
+    protected TrackerInterface $tracker;
 
-    public function __construct(\Gems_Tracker $tracker, string $language)
+    public function __construct(TrackerInterface $tracker, string $language)
     {
         $this->tracker = $tracker;
         $this->language = $language;
@@ -181,17 +185,14 @@ class QuestionnaireItemsTransformer extends \MUtil_Model_ModelTransformerAbstrac
 
     /**
      * @param int $sourceId
-     * @return \Gems_Tracker_Source_SourceInterface
-     * @throws \Gems_Exception_Coding
+     * @return SourceInterface
      */
-    protected function getSource(int $sourceId): \Gems_Tracker_Source_SourceInterface
+    protected function getSource(int $sourceId): SourceInterface
     {
-        $source = $this->tracker->getSource($sourceId);
-
-        return $source;
+        return $this->tracker->getSource($sourceId);
     }
 
-    public function transformLoad(\MUtil_Model_ModelAbstract $model, array $data, $new = false, $isPostData = false): array
+    public function transformLoad(ModelAbstract $model, array $data, $new = false, $isPostData = false): array
     {
         foreach($data as $key=>$row) {
             $source = $this->getSource($row['gsu_id_source']);

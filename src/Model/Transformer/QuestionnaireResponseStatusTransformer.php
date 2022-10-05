@@ -2,25 +2,25 @@
 
 namespace Gems\Api\Fhir\Model\Transformer;
 
+use DateTimeInterface;
+use DateTimeImmutable;
+use MUtil\Model\ModelAbstract;
+use MUtil\Model\ModelTransformerAbstract;
 
-class QuestionnaireResponseStatusTransformer extends \MUtil_Model_ModelTransformerAbstract
+class QuestionnaireResponseStatusTransformer extends ModelTransformerAbstract
 {
     protected function getFilterPartFromStatus(string $status): ?string
     {
-        switch($status) {
-            case 'completed':
-                return '(gto_completion_time IS NOT NULL AND grc_success = 1)';
-            case 'entered-in-error':
-                return '(grc_success = 0)';
-            case 'in-progress':
-                return '(gto_completion_time IS NULL AND grc_success = 1 AND gto_start_time IS NOT NULL AND (gto_valid_from IS NULL OR gto_valid_from > NOW())';
-            case 'stopped':
-                return '(gto_completion_time IS NULL AND grc_success = 1 AND gto_start_time IS NOT NULL AND (gto_valid_from < NOW())';
-        }
-        return null;
+        return match ($status) {
+            'completed' => '(gto_completion_time IS NOT NULL AND grc_success = 1)',
+            'entered-in-error' => '(grc_success = 0)',
+            'in-progress' => '(gto_completion_time IS NULL AND grc_success = 1 AND gto_start_time IS NOT NULL AND (gto_valid_from IS NULL OR gto_valid_from > NOW())',
+            'stopped' => '(gto_completion_time IS NULL AND grc_success = 1 AND gto_start_time IS NOT NULL AND (gto_valid_from < NOW())',
+            default => null,
+        };
     }
 
-    public function transformFilter(\MUtil_Model_ModelAbstract $model, array $filter): array
+    public function transformFilter(ModelAbstract $model, array $filter): array
     {
         if (isset($filter['status'])) {
             if (is_array($filter['status'])) {
@@ -43,7 +43,7 @@ class QuestionnaireResponseStatusTransformer extends \MUtil_Model_ModelTransform
         return $filter;
     }
 
-    public function transformLoad(\MUtil_Model_ModelAbstract $model, array $data, $new = false, $isPostData = false): array
+    public function transformLoad(ModelAbstract $model, array $data, $new = false, $isPostData = false): array
     {
         foreach ($data as $key => $row) {
             if ($row['gto_completion_time'] !== null && $row['grc_success'] == 1) {
@@ -56,16 +56,13 @@ class QuestionnaireResponseStatusTransformer extends \MUtil_Model_ModelTransform
             }
 
             $validUntil = null;
-            $now = new \DateTimeImmutable();
+            $now = new DateTimeImmutable();
             $validUntil = null;
             if ($row['gto_valid_until']) {
                 $validUntil = $row['gto_valid_until'];
-                if ($validUntil instanceof \MUtil_Date) {
-                    $validUntil = $validUntil->getTimestamp();
-                }
 
-                if (!$validUntil instanceof \DateTimeImmutable) {
-                    $validUntil = new \DateTimeImmutable($validUntil);
+                if (!$validUntil instanceof DateTimeInterface) {
+                    $validUntil = new DateTimeImmutable($validUntil);
                 }
             }
 

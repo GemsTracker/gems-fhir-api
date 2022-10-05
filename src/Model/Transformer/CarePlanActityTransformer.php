@@ -3,20 +3,23 @@
 namespace Gems\Api\Fhir\Model\Transformer;
 
 use Gems\Api\Fhir\Endpoints;
+use Gems\Tracker\TrackerInterface;
+use MUtil\Model\ModelAbstract;
+use MUtil\Model\ModelTransformerAbstract;
 
-class CarePlanActityTransformer extends \MUtil_Model_ModelTransformerAbstract
+class CarePlanActityTransformer extends ModelTransformerAbstract
 {
     /**
-     * @var \Gems_Tracker_TrackerInterface
+     * @var TrackerInterface
      */
-    protected \Gems_Tracker_TrackerInterface $tracker;
+    protected TrackerInterface $tracker;
 
-    public function __construct(\Gems_Tracker_TrackerInterface $tracker)
+    public function __construct(TrackerInterface $tracker)
     {
         $this->tracker = $tracker;
     }
 
-    public function transformLoad(\MUtil_Model_ModelAbstract $model, array $data, $new = false, $isPostData = false): array
+    public function transformLoad(ModelAbstract $model, array $data, $new = false, $isPostData = false): array
     {
         foreach ($data as $key => $row) {
             $respondentTrackId = $row['gr2t_id_respondent_track'];

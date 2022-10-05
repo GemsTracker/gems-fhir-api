@@ -4,18 +4,20 @@ namespace Gems\Api\Fhir\Model;
 
 use Gems\Api\Fhir\Model\Transformer\QuestionnaireItemsTransformer;
 use Gems\Api\Fhir\Model\Transformer\QuestionnaireSubjectTypeTransformer;
+use Gems\Tracker;
+use MUtil\Model\JoinModel;
 
-class QuestionnaireModel extends \MUtil_Model_JoinModel
+class QuestionnaireModel extends JoinModel
 {
-    /**
-     * @var \Gems_Loader
-     */
-    public $loader;
-
     /**
      * @var \Zend_Locale
      */
     public $locale;
+
+    /**
+     * @var Tracker
+     */
+    protected $tracker;
 
     public function __construct()
     {
@@ -45,8 +47,7 @@ class QuestionnaireModel extends \MUtil_Model_JoinModel
 
     public function afterRegistry()
     {
-        $tracker = $this->loader->getTracker();
         $this->addTransformer(new QuestionnaireSubjectTypeTransformer());
-        $this->addTransformer(new QuestionnaireItemsTransformer($tracker, $this->locale->getLanguage()));
+        $this->addTransformer(new QuestionnaireItemsTransformer($this->tracker, $this->locale->getLanguage()));
     }
 }

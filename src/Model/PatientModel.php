@@ -8,8 +8,9 @@ use Gems\Api\Fhir\Model\Transformer\PatientHumanNameTransformer;
 use Gems\Api\Fhir\Model\Transformer\PatientIdTransformer;
 use Gems\Api\Fhir\Model\Transformer\PatientManagingOrganizationTransformer;
 use Gems\Api\Fhir\Model\Transformer\PatientTelecomTransformer;
+use Gems\Model\RespondentModel;
 
-class PatientModel extends \Gems_Model_RespondentModel
+class PatientModel extends RespondentModel
 {
     public function __construct()
     {

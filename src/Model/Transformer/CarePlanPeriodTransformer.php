@@ -2,44 +2,40 @@
 
 namespace Gems\Api\Fhir\Model\Transformer;
 
+use DateTimeInterface;
+use DateTimeImmutable;
+use MUtil\Model\ModelAbstract;
+use MUtil\Model\ModelTransformerAbstract;
 
-class CarePlanPeriodTransformer extends \MUtil_Model_ModelTransformerAbstract
+class CarePlanPeriodTransformer extends ModelTransformerAbstract
 {
-    public function transformLoad(\MUtil_Model_ModelAbstract $model, array $data, $new = false, $isPostData = false): array
+    public function transformLoad(ModelAbstract $model, array $data, $new = false, $isPostData = false): array
     {
         foreach ($data as $key => $row) {
             $validFrom = null;
             if ($row['gr2t_start_date']) {
                 $validFrom = $row['gr2t_start_date'];
-                if ($validFrom instanceof \MUtil_Date) {
-                    $validFrom = $validFrom->getTimestamp();
-                }
-
-                if (!$validFrom instanceof \DateTimeImmutable) {
-                    $validFrom = new \DateTimeImmutable($validFrom);
+                if (!$validFrom instanceof DateTimeInterface) {
+                    $validFrom = new DateTimeImmutable($validFrom);
                 }
             }
 
             $data[$key]['period']['start'] = null;
-            if ($validFrom instanceof \DateTimeImmutable) {
-                $data[$key]['period']['start'] = $validFrom->format(\DateTime::ATOM);
+            if ($validFrom instanceof DateTimeInterface) {
+                $data[$key]['period']['start'] = $validFrom->format(DateTimeInterface::ATOM);
             }
 
             $validUntil = null;
             if ($row['gr2t_end_date']) {
                 $validUntil = $row['gr2t_end_date'];
-                if ($validUntil instanceof \MUtil_Date) {
-                    $validUntil = $validUntil->getTimestamp();
-                }
-
-                if (!$validUntil instanceof \DateTimeImmutable) {
-                    $validUntil = new \DateTimeImmutable($validUntil);
+                if (!$validUntil instanceof DateTimeInterface) {
+                    $validUntil = new DateTimeImmutable($validUntil);
                 }
             }
 
             $data[$key]['period']['end'] = null;
-            if ($validUntil instanceof \DateTimeImmutable) {
-                $data[$key]['period']['end'] = $validUntil->format(\DateTime::ATOM);
+            if ($validUntil instanceof DateTimeInterface) {
+                $data[$key]['period']['end'] = $validUntil->format(DateTimeInterface::ATOM);
             }
         }
         return $data;

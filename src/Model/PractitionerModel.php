@@ -6,8 +6,9 @@ namespace Gems\Api\Fhir\Model;
 use Gems\Api\Fhir\Model\Transformer\BooleanTransformer;
 use Gems\Api\Fhir\Model\Transformer\PractitionerHumanNameTransformer;
 use Gems\Api\Fhir\Model\Transformer\PractitionerTelecomTransformer;
+use Gems\Model\JoinModel;
 
-class PractitionerModel extends \Gems_Model_JoinModel
+class PractitionerModel extends JoinModel
 {
     public function __construct()
     {

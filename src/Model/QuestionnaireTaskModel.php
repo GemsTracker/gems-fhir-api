@@ -10,8 +10,9 @@ use Gems\Api\Fhir\Model\Transformer\QuestionnaireTaskForTransformer;
 use Gems\Api\Fhir\Model\Transformer\QuestionnaireTaskInfoTransformer;
 use Gems\Api\Fhir\Model\Transformer\QuestionnaireOwnerTransformer;
 use Gems\Api\Fhir\Model\Transformer\QuestionnaireTaskStatusTransformer;
+use Gems\Model\JoinModel;
 
-class QuestionnaireTaskModel extends \Gems_Model_JoinModel
+class QuestionnaireTaskModel extends JoinModel
 {
     /**
      * @var \Zend_Db_Adapter_Abstract

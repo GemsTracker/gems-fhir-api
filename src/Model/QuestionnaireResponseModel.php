@@ -8,18 +8,20 @@ use Gems\Api\Fhir\Model\Transformer\PatientReferenceTransformer;
 use Gems\Api\Fhir\Model\Transformer\QuestionnaireResponseItemsTransformer;
 use Gems\Api\Fhir\Model\Transformer\QuestionnaireOwnerTransformer;
 use Gems\Api\Fhir\Model\Transformer\QuestionnaireResponseStatusTransformer;
+use Gems\Model\JoinModel;
+use Gems\Tracker;
 
-class QuestionnaireResponseModel extends \Gems_Model_JoinModel
+class QuestionnaireResponseModel extends JoinModel
 {
-    /**
-     * @var \Gems_Loader
-     */
-    public $loader;
-
     /**
      * @var \Zend_Locale
      */
     public $locale;
+
+    /**
+     * @var Tracker
+     */
+    public $tracker;
 
     public function __construct()
     {
@@ -56,7 +58,6 @@ class QuestionnaireResponseModel extends \Gems_Model_JoinModel
 
     public function afterRegistry()
     {
-        $tracker = $this->loader->getTracker();
-        $this->addTransformer(new QuestionnaireResponseItemsTransformer($tracker, $this->locale->getLanguage()));
+        $this->addTransformer(new QuestionnaireResponseItemsTransformer($this->tracker, $this->locale->getLanguage()));
     }
 }

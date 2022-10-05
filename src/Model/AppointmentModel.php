@@ -9,7 +9,7 @@ use Gems\Api\Fhir\Model\Transformer\AppointmentServiceTypeTransformer;
 use Gems\Api\Fhir\Model\Transformer\AppointmentStatusTransformer;
 use Gems\Api\Fhir\Model\Transformer\IntTransformer;
 
-class AppointmentModel extends \Gems_Model_AppointmentModel
+class AppointmentModel extends \Gems\Model\AppointmentModel
 {
     public function __construct()
     {

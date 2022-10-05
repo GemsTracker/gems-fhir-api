@@ -7,9 +7,10 @@ use Gems\Api\Fhir\Model\Transformer\EpisodeOfCareStatusTransformer;
 use Gems\Api\Fhir\Model\Transformer\IntTransformer;
 use Gems\Api\Fhir\Model\Transformer\ManagingOrganizationTransformer;
 use Gems\Api\Fhir\Model\Transformer\PatientReferenceTransformer;
+use Gems\Model\JoinModel;
 use MUtil\Model\Type\JsonData;
 
-class EpisodeOfCareModel extends \Gems_Model_JoinModel
+class EpisodeOfCareModel extends JoinModel
 {
     public function __construct()
     {

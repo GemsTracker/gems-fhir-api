@@ -3,20 +3,22 @@
 
 namespace Gems\Api\Fhir\Model\Transformer;
 
+use MUtil\Model\ModelAbstract;
+use MUtil\Model\ModelTransformerAbstract;
 
-class OrganizationTelecomTransformer extends \MUtil_Model_ModelTransformerAbstract
+class OrganizationTelecomTransformer extends ModelTransformerAbstract
 {
     /**
      * The transform function performs the actual transformation of the data and is called after
      * the loading of the data in the source model.
      *
-     * @param \MUtil_Model_ModelAbstract $model The parent model
+     * @param ModelAbstract $model The parent model
      * @param array $data Nested array
      * @param boolean $new True when loading a new item
      * @param boolean $isPostData With post data, unselected multiOptions values are not set so should be added
      * @return array Nested array containing (optionally) transformed data
      */
-    public function transformLoad(\MUtil_Model_ModelAbstract $model, array $data, $new = false, $isPostData = false): array
+    public function transformLoad(ModelAbstract $model, array $data, $new = false, $isPostData = false): array
     {
         foreach ($data as $key => $item) {
             $elements = [];

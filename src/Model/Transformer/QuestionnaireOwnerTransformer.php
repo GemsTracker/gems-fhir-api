@@ -5,8 +5,10 @@ namespace Gems\Api\Fhir\Model\Transformer;
 
 use Gems\Api\Fhir\Endpoints;
 use Gems\Api\Fhir\PatientInformationFormatter;
+use MUtil\Model\ModelAbstract;
+use MUtil\Model\ModelTransformerAbstract;
 
-class QuestionnaireOwnerTransformer extends \MUtil_Model_ModelTransformerAbstract
+class QuestionnaireOwnerTransformer extends ModelTransformerAbstract
 {
     protected string $fieldName;
 
@@ -15,7 +17,7 @@ class QuestionnaireOwnerTransformer extends \MUtil_Model_ModelTransformerAbstrac
         $this->fieldName = $fieldName;
     }
 
-    public function transformFilter(\MUtil_Model_ModelAbstract $model, array $filter): array
+    public function transformFilter(ModelAbstract $model, array $filter): array
     {
         if (isset($filter[$this->fieldName . '_name'])) {
             $name = $filter[$this->fieldName . '_name'];
@@ -69,32 +71,32 @@ class QuestionnaireOwnerTransformer extends \MUtil_Model_ModelTransformerAbstrac
                 $ownerType = strtolower($filter[$this->fieldName . '_type']);
             }
 
-            if (strpos($id,'Patient/') === 0 || strpos($id,Endpoints::PATIENT) === 0 || $ownerType == 'patient') {
+            if (str_starts_with($id, 'Patient/') || str_starts_with($id, Endpoints::PATIENT) || $ownerType == 'patient') {
                 list($patientNr, $organizationId) = str_replace(['Patient/', Endpoints::PATIENT], '', $id);
                 $filter['gr2o_patient_nr'] = $patientNr;
                 $filter['gr2o_id_organization'] = $organizationId;
 
                 $filter[$this->fieldName . '_type'] = 'patient';
 
-            } elseif (strpos($id,'RelatedPerson/') === 0 || strpos($id,Endpoints::RELATED_PERSON) === 0 || $ownerType == 'relatedperson') {
+            } elseif (str_starts_with($id, 'RelatedPerson/') || str_starts_with($id, Endpoints::RELATED_PERSON) || $ownerType == 'relatedperson') {
                 $id = str_replace(['RelatedPerson/', Endpoints::RELATED_PERSON], '', $id);
                 $filter['grr_id_relation'] = $id;
 
                 $filter[$this->fieldName . '_type'] = 'relatedperson';
 
-            } elseif (strpos($id,'Organization/') === 0 || strpos($id,Endpoints::ORGANIZATION) === 0 || $ownerType == 'organization') {
+            } elseif (str_starts_with($id, 'Organization/') || str_starts_with($id, Endpoints::ORGANIZATION) || $ownerType == 'organization') {
                 $id = str_replace(['Organization/', Endpoints::ORGANIZATION], '', $id);
                 $filter['gto_id_organization'] = $id;
 
                 $filter[$this->fieldName . '_type'] = 'organization';
 
-            } elseif (strpos($id,'Practitioner/') === 0 || strpos($id,Endpoints::PRACTITIONER) === 0 || $ownerType == 'practitioner') {
+            } elseif (str_starts_with($id, 'Practitioner/') || str_starts_with($id, Endpoints::PRACTITIONER) || $ownerType == 'practitioner') {
                 $id = str_replace(['Practitioner/', Endpoints::PRACTITIONER], '', $id);
                 $filter['gas_id_user'] = $id;
 
                 $filter[$this->fieldName . '_type'] = 'practitioner';
 
-            } elseif (strpos($id, '@') !== false) {
+            } elseif (str_contains($id, '@')) {
                 // Assume patient if delimiter is used
                 list($patientNr, $organizationId) = explode('@', str_replace(['Patient/', Endpoints::PATIENT], '', $id));
                 $filter['gr2o_patient_nr'] = $patientNr;
@@ -114,7 +116,7 @@ class QuestionnaireOwnerTransformer extends \MUtil_Model_ModelTransformerAbstrac
                 case 'relatedperson':
                     $filter['ggp_respondent_members'] = 1;
                     $filter[] = 'gto_id_relationfield IS NOT NULL';
-                    $filter['gto_id_relation > 0'];
+                    $filter['gto_id_relation > 0'] = 1;
                     break;
                 case 'organization':
                     $filter['ggp_staff_members'] = 1;
@@ -138,13 +140,13 @@ class QuestionnaireOwnerTransformer extends \MUtil_Model_ModelTransformerAbstrac
      * The transform function performs the actual transformation of the data and is called after
      * the loading of the data in the source model.
      *
-     * @param \MUtil_Model_ModelAbstract $model The parent model
+     * @param ModelAbstract $model The parent model
      * @param array $data Nested array
      * @param boolean $new True when loading a new item
      * @param boolean $isPostData With post data, unselected multiOptions values are not set so should be added
      * @return array Nested array containing (optionally) transformed data
      */
-    public function transformLoad(\MUtil_Model_ModelAbstract $model, array $data, $new = false, $isPostData = false): array
+    public function transformLoad(ModelAbstract $model, array $data, $new = false, $isPostData = false): array
     {
         foreach ($data as $key => $row) {
 

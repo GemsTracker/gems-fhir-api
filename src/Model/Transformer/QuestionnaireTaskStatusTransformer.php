@@ -2,27 +2,26 @@
 
 namespace Gems\Api\Fhir\Model\Transformer;
 
+use DateTimeInterface;
+use DateTimeImmutable;
+use MUtil\Model\ModelAbstract;
+use MUtil\Model\ModelTransformerAbstract;
 
-class QuestionnaireTaskStatusTransformer extends \MUtil_Model_ModelTransformerAbstract
+class QuestionnaireTaskStatusTransformer extends ModelTransformerAbstract
 {
     protected function getFilterPartFromStatus(string $status): ?string
     {
-        switch($status) {
-            case 'completed':
-                return '(gto_completion_time IS NOT NULL AND grc_success = 1)';
-            case 'rejected':
-                return '(gto_completion_time IS NULL AND gto_valid_until IS NOT NULL AND gto_valid_until < NOW() AND grc_success = 1)';
-            case 'draft':
-                return '((gto_valid_from IS NULL OR gto_valid_from > NOW()) AND gto_start_time IS NULL AND grc_success = 1)';
-            case 'requested':
-                return '(gto_completion_time IS NULL AND gto_start_time IS NULL AND gto_valid_from IS NOT NULL AND gto_valid_from < NOW() AND (gto_valid_until > NOW() OR gto_valid_until IS NULL)  AND grc_success = 1)';
-            case 'in-progress':
-                return '(gto_completion_time IS NULL AND gto_start_time IS NOT NULL AND gto_valid_from IS NOT NULL AND gto_valid_from < NOW() AND (gto_valid_until > NOW() OR gto_valid_until IS NULL)  AND grc_success = 1)';
-        }
-        return null;
+        return match ($status) {
+            'completed' => '(gto_completion_time IS NOT NULL AND grc_success = 1)',
+            'rejected' => '(gto_completion_time IS NULL AND gto_valid_until IS NOT NULL AND gto_valid_until < NOW() AND grc_success = 1)',
+            'draft' => '((gto_valid_from IS NULL OR gto_valid_from > NOW()) AND gto_start_time IS NULL AND grc_success = 1)',
+            'requested' => '(gto_completion_time IS NULL AND gto_start_time IS NULL AND gto_valid_from IS NOT NULL AND gto_valid_from < NOW() AND (gto_valid_until > NOW() OR gto_valid_until IS NULL)  AND grc_success = 1)',
+            'in-progress' => '(gto_completion_time IS NULL AND gto_start_time IS NOT NULL AND gto_valid_from IS NOT NULL AND gto_valid_from < NOW() AND (gto_valid_until > NOW() OR gto_valid_until IS NULL)  AND grc_success = 1)',
+            default => null,
+        };
     }
 
-    public function transformFilter(\MUtil_Model_ModelAbstract $model, array $filter): array
+    public function transformFilter(ModelAbstract $model, array $filter): array
     {
         if (isset($filter['status'])) {
             if (is_array($filter['status'])) {
@@ -46,32 +45,26 @@ class QuestionnaireTaskStatusTransformer extends \MUtil_Model_ModelTransformerAb
     }
 
 
-    public function transformLoad(\MUtil_Model_ModelAbstract $model, array $data, $new = false, $isPostData = false): array
+    public function transformLoad(ModelAbstract $model, array $data, $new = false, $isPostData = false): array
     {
         foreach($data as $key=>$row) {
-            $now = new \DateTimeImmutable();
+            $now = new DateTimeImmutable();
 
             $validFrom = null;
             if ($row['gto_valid_from']) {
                 $validFrom = $row['gto_valid_from'];
-                if ($validFrom instanceof \MUtil_Date) {
-                    $validFrom = $validFrom->getTimestamp();
-                }
 
-                if (!$validFrom instanceof \DateTimeImmutable) {
-                    $validFrom = new \DateTimeImmutable($validFrom);
+                if (!$validFrom instanceof DateTimeInterface) {
+                    $validFrom = new DateTimeImmutable($validFrom);
                 }
             }
 
             $validUntil = null;
             if ($row['gto_valid_until']) {
                 $validUntil = $row['gto_valid_until'];
-                if ($validUntil instanceof \MUtil_Date) {
-                    $validUntil = $validUntil->getTimestamp();
-                }
-
-                if (!$validUntil instanceof \DateTimeImmutable) {
-                    $validUntil = new \DateTimeImmutable($validUntil);
+                
+                if (!$validUntil instanceof DateTimeInterface) {
+                    $validUntil = new DateTimeImmutable($validUntil);
                 }
             }
 

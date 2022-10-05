@@ -8,7 +8,7 @@ use Gems\Api\Fhir\Model\Transformer\BooleanTransformer;
 use Gems\Api\Fhir\Model\Transformer\OrganizationContactTransformer;
 use Gems\Api\Fhir\Model\Transformer\OrganizationTelecomTransformer;
 
-class OrganizationModel extends \Gems_Model_OrganizationModel
+class OrganizationModel extends \Gems\Model\OrganizationModel
 {
     public function __construct()
     {

@@ -2,10 +2,12 @@
 
 namespace Gems\Api\Fhir\Model\Transformer;
 
-
 use Gems\Api\Fhir\Endpoints;
+use MUtil\Model\DatabaseModelAbstract;
+use MUtil\Model\ModelAbstract;
+use MUtil\Model\ModelTransformerAbstract;
 
-class QuestionnaireReferenceTransformer extends \MUtil_Model_ModelTransformerAbstract
+class QuestionnaireReferenceTransformer extends ModelTransformerAbstract
 {
     protected string $dbField;
 
@@ -17,7 +19,7 @@ class QuestionnaireReferenceTransformer extends \MUtil_Model_ModelTransformerAbs
         $this->field = $field;
     }
 
-    public function transformFilter(\MUtil_Model_ModelAbstract $model, array $filter): array
+    public function transformFilter(ModelAbstract $model, array $filter): array
     {
         if (isset($filter['survey'])) {
             $filter[$this->dbField] = $filter['survey'];
@@ -36,7 +38,7 @@ class QuestionnaireReferenceTransformer extends \MUtil_Model_ModelTransformerAbs
 
         if (isset($filter['survey_name'])) {
             $value = "%".$filter['survey_name'].'%';
-            if ($model instanceof \MUtil_Model_DatabaseModelAbstract) {
+            if ($model instanceof DatabaseModelAbstract) {
                 $adapter = $model->getAdapter();
                 $value = $adapter->quote($value);
                 $filter[] = 'gsu_survey_name LIKE ' . $value;
@@ -47,7 +49,7 @@ class QuestionnaireReferenceTransformer extends \MUtil_Model_ModelTransformerAbs
 
         if (isset($filter['questionnaire_name'])) {
             $value = '%'.$filter['questionnaire_name'].'%';
-            if ($model instanceof \MUtil_Model_DatabaseModelAbstract) {
+            if ($model instanceof DatabaseModelAbstract) {
                 $adapter = $model->getAdapter();
                 $value = $adapter->quote($value);
                 $filter[] = 'gsu_survey_name LIKE ' . $value;
@@ -68,7 +70,7 @@ class QuestionnaireReferenceTransformer extends \MUtil_Model_ModelTransformerAbs
         return $filter;
     }
 
-    public function transformLoad(\MUtil_Model_ModelAbstract $model, array $data, $new = false, $isPostData = false): array
+    public function transformLoad(ModelAbstract $model, array $data, $new = false, $isPostData = false): array
     {
         foreach($data as $key=>$row) {
             if (isset($row[$this->dbField])) {

@@ -9,13 +9,15 @@ use Gems\Api\Fhir\Model\Transformer\CarePlanInfoTransformer;
 use Gems\Api\Fhir\Model\Transformer\CarePlanPeriodTransformer;
 use Gems\Api\Fhir\Model\Transformer\IntTransformer;
 use Gems\Api\Fhir\Model\Transformer\PatientReferenceTransformer;
+use Gems\Model\JoinModel;
+use Gems\Tracker;
 
-class CarePlanModel extends \Gems_Model_JoinModel
+class CarePlanModel extends JoinModel
 {
     /**
-     * @var \Gems_Loader
+     * @var Tracker
      */
-    protected $loader;
+    protected $tracker;
 
     public function __construct()
     {
@@ -108,7 +110,6 @@ END'), 'status');
         $this->addTransformer(new CarePlanPeriodTransformer());
         $this->addTransformer(new CarePlanInfoTransformer());
 
-        $tracker = $this->loader->getTracker();
-        $this->addTransformer(new CarePlanActityTransformer($tracker));
+        $this->addTransformer(new CarePlanActityTransformer($this->tracker));
     }
 }

@@ -3,19 +3,22 @@
 namespace Gems\Api\Fhir\Model\Transformer;
 
 use Gems\Api\Fhir\Endpoints;
+use MUtil\Model\DatabaseModelAbstract;
+use MUtil\Model\ModelAbstract;
+use MUtil\Model\ModelTransformerAbstract;
 
-class CarePlanContributorTransformer extends \MUtil_Model_ModelTransformerAbstract
+class CarePlanContributorTransformer extends ModelTransformerAbstract
 {
     /**
      * This transform function checks the filter for
      * a) retreiving filters to be applied to the transforming data,
      * b) adding filters that are needed
      *
-     * @param \MUtil_Model_ModelAbstract $model
+     * @param ModelAbstract $model
      * @param array $filter
      * @return array The (optionally changed) filter
      */
-    public function transformFilter(\MUtil_Model_ModelAbstract $model, array $filter): array
+    public function transformFilter(ModelAbstract $model, array $filter): array
     {
         // Organization filters
         if (isset($filter['organization'])) {
@@ -27,7 +30,7 @@ class CarePlanContributorTransformer extends \MUtil_Model_ModelTransformerAbstra
 
         if (isset($filter['organization.name'])) {
             $value = '%'.$filter['organization.name'].'%';
-            if ($model instanceof \MUtil_Model_DatabaseModelAbstract) {
+            if ($model instanceof DatabaseModelAbstract) {
                 $adapter = $model->getAdapter();
                 $value = $adapter->quote($value);
                 $filter[] = "gor_name LIKE " . $value;
@@ -46,7 +49,7 @@ class CarePlanContributorTransformer extends \MUtil_Model_ModelTransformerAbstra
         return $filter;
     }
 
-    public function transformLoad(\MUtil_Model_ModelAbstract $model, array $data, $new = false, $isPostData = false): array
+    public function transformLoad(ModelAbstract $model, array $data, $new = false, $isPostData = false): array
     {
         foreach($data as $key=>$row) {
             $organizationInfo = [

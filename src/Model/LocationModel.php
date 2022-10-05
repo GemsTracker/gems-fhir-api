@@ -8,8 +8,9 @@ use Gems\Api\Fhir\Model\Transformer\BooleanTransformer;
 use Gems\Api\Fhir\Model\Transformer\LocationAddressTransformer;
 use Gems\Api\Fhir\Model\Transformer\LocationStatusTransformer;
 use Gems\Api\Fhir\Model\Transformer\LocationTelecomTransformer;
+use Gems\Model\JoinModel;
 
-class LocationModel extends \Gems_Model_JoinModel
+class LocationModel extends JoinModel
 {
     public function __construct()
     {
