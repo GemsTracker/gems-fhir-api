@@ -82,7 +82,7 @@ class PatientHumanNameTransformer extends ModelTransformerAbstract
                 $givenName = $item['grs_initials_name'];
             }
 
-            if (empty(trim($givenName))) {
+            if (empty(trim((string)$givenName))) {
                 $givenName = null;
             }
 

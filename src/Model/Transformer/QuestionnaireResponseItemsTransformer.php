@@ -4,6 +4,7 @@ namespace Gems\Api\Fhir\Model\Transformer;
 
 
 use Gems\Tracker\TrackerInterface;
+use MUtil\Model\ModelAbstract;
 use MUtil\Model\ModelTransformerAbstract;
 
 class QuestionnaireResponseItemsTransformer extends ModelTransformerAbstract

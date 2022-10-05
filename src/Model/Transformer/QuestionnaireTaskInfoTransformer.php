@@ -137,7 +137,7 @@ class QuestionnaireTaskInfoTransformer extends ModelTransformerAbstract
 
     protected function getLoginUrl(array $row): string
     {
-        if (array_key_exists('gor_url_base', $row) && $baseUrls = explode(' ', $row['gor_url_base'])) {
+        if (array_key_exists('gor_url_base', $row) && $row['gor_url_base'] !== null && $baseUrls = explode(' ', $row['gor_url_base'])) {
             $baseUrl = reset($baseUrls);
             if (!empty($baseUrl)) {
                 return $baseUrl;
