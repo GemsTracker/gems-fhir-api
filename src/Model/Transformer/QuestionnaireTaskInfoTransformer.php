@@ -3,7 +3,7 @@
 namespace Gems\Api\Fhir\Model\Transformer;
 
 use Gems\Api\Fhir\Endpoints;
-use MUtil\Model\ModelAbstract;
+use Zalt\Model\MetaModelInterface;
 use MUtil\Model\ModelTransformerAbstract;
 
 class QuestionnaireTaskInfoTransformer extends ModelTransformerAbstract
@@ -42,7 +42,7 @@ class QuestionnaireTaskInfoTransformer extends ModelTransformerAbstract
         return $this->respondentTrackReceptionCodes;
     }
 
-    public function transformFilter(ModelAbstract $model, array $filter): array
+    public function transformFilter(MetaModelInterface $model, array $filter): array
     {
         if (isset($filter['roundDescription'])) {
             $filter['gto_round_description'] = $filter['roundDescription'];
@@ -89,7 +89,7 @@ class QuestionnaireTaskInfoTransformer extends ModelTransformerAbstract
         return $filter;
     }
 
-    public function transformLoad(ModelAbstract $model, array $data, $new = false, $isPostData = false): array
+    public function transformLoad(MetaModelInterface $model, array $data, $new = false, $isPostData = false): array
     {
         foreach($data as $key=>$row) {
             $info = [];

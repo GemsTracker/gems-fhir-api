@@ -4,14 +4,14 @@ namespace Gems\Api\Fhir\Model\Transformer;
 
 
 use Gems\Api\Fhir\Endpoints;
-use MUtil\Model\ModelAbstract;
+use Zalt\Model\MetaModelInterface;
 use MUtil\Model\ModelTransformerAbstract;
 
 class CarePlanInfoTransformer extends ModelTransformerAbstract
 {
     use RespondentTrackFields;
 
-    public function transformLoad(ModelAbstract $model, array $data, $new = false, $isPostData = false): array
+    public function transformLoad(MetaModelInterface $model, array $data, $new = false, $isPostData = false): array
     {
         foreach($data as $key=>$row) {
             $respondentTrackId = $row['gr2t_id_respondent_track'];

@@ -4,12 +4,12 @@ namespace Gems\Api\Fhir\Model\Transformer;
 
 use DateTimeInterface;
 use DateTimeImmutable;
-use MUtil\Model\ModelAbstract;
+use Zalt\Model\MetaModelInterface;
 use MUtil\Model\ModelTransformerAbstract;
 
 class QuestionnaireTaskExecutionPeriodTransformer extends ModelTransformerAbstract
 {
-    public function transformLoad(ModelAbstract $model, array $data, $new = false, $isPostData = false): array
+    public function transformLoad(MetaModelInterface $model, array $data, $new = false, $isPostData = false): array
     {
         foreach ($data as $key => $row) {
             $validFrom = null;
@@ -43,7 +43,7 @@ class QuestionnaireTaskExecutionPeriodTransformer extends ModelTransformerAbstra
         return $data;
     }
 
-    public function transformRowBeforeSave(ModelAbstract $model, array $row): array
+    public function transformRowBeforeSave(MetaModelInterface $model, array $row): array
     {
         if (isset($row['executionPeriod'])) {
             if (array_key_exists('start', $row['executionPeriod'])) {

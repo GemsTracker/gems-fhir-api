@@ -2,12 +2,12 @@
 
 namespace Gems\Api\Fhir\Model\Transformer;
 
-use MUtil\Model\ModelAbstract;
+use Zalt\Model\MetaModelInterface;
 use MUtil\Model\ModelTransformerAbstract;
 
 class PatientIdTransformer extends ModelTransformerAbstract
 {
-    public function transformFilter(ModelAbstract $model, array $filter): array
+    public function transformFilter(MetaModelInterface $model, array $filter): array
     {
         if (isset($filter['id'])) {
             if (!is_array($filter['id'])) {

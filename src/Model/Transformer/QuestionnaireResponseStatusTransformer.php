@@ -4,7 +4,7 @@ namespace Gems\Api\Fhir\Model\Transformer;
 
 use DateTimeInterface;
 use DateTimeImmutable;
-use MUtil\Model\ModelAbstract;
+use Zalt\Model\MetaModelInterface;
 use MUtil\Model\ModelTransformerAbstract;
 
 class QuestionnaireResponseStatusTransformer extends ModelTransformerAbstract
@@ -20,7 +20,7 @@ class QuestionnaireResponseStatusTransformer extends ModelTransformerAbstract
         };
     }
 
-    public function transformFilter(ModelAbstract $model, array $filter): array
+    public function transformFilter(MetaModelInterface $model, array $filter): array
     {
         if (isset($filter['status'])) {
             if (is_array($filter['status'])) {
@@ -43,7 +43,7 @@ class QuestionnaireResponseStatusTransformer extends ModelTransformerAbstract
         return $filter;
     }
 
-    public function transformLoad(ModelAbstract $model, array $data, $new = false, $isPostData = false): array
+    public function transformLoad(MetaModelInterface $model, array $data, $new = false, $isPostData = false): array
     {
         foreach ($data as $key => $row) {
             if ($row['gto_completion_time'] !== null && $row['grc_success'] == 1) {

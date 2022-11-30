@@ -3,12 +3,12 @@
 
 namespace Gems\Api\Fhir\Model\Transformer;
 
-use MUtil\Model\ModelAbstract;
+use Zalt\Model\MetaModelInterface;
 use MUtil\Model\ModelTransformerAbstract;
 
 class EpisodeOfCarePeriodTransformer extends ModelTransformerAbstract
 {
-    public function transformFilter(ModelAbstract $model, array $filter): array
+    public function transformFilter(MetaModelInterface $model, array $filter): array
     {
         if (isset($filter['start'])) {
             $filter['gec_startdate'] = $filter['start'];
@@ -22,7 +22,7 @@ class EpisodeOfCarePeriodTransformer extends ModelTransformerAbstract
         return $filter;
     }
 
-    public function transformLoad(ModelAbstract $model, array $data, $new = false, $isPostData = false): array
+    public function transformLoad(MetaModelInterface $model, array $data, $new = false, $isPostData = false): array
     {
         foreach($data as $key=>$item) {
             $period = [];

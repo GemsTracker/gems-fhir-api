@@ -2,12 +2,12 @@
 
 namespace Gems\Api\Fhir\Model\Transformer;
 
-use MUtil\Model\ModelAbstract;
+use Zalt\Model\MetaModelInterface;
 use MUtil\Model\ModelTransformerAbstract;
 
 class QuestionnaireSubjectTypeTransformer extends ModelTransformerAbstract
 {
-    public function transformFilter(ModelAbstract $model, array $filter): array
+    public function transformFilter(MetaModelInterface $model, array $filter): array
     {
         if (isset($filter['subjectType'])) {
             switch(strtolower($filter['subjectType'])) {
@@ -23,7 +23,7 @@ class QuestionnaireSubjectTypeTransformer extends ModelTransformerAbstract
         return $filter;
     }
 
-    public function transformLoad(ModelAbstract $model, array $data, $new = false, $isPostData = false): array
+    public function transformLoad(MetaModelInterface $model, array $data, $new = false, $isPostData = false): array
     {
         foreach($data as $key=>$row) {
             if (isset($row['ggp_respondent_members']) && $row['ggp_respondent_members'] == 1) {

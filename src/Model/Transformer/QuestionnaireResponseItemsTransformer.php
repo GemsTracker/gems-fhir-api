@@ -4,7 +4,7 @@ namespace Gems\Api\Fhir\Model\Transformer;
 
 
 use Gems\Tracker\TrackerInterface;
-use MUtil\Model\ModelAbstract;
+use Zalt\Model\MetaModelInterface;
 use MUtil\Model\ModelTransformerAbstract;
 
 class QuestionnaireResponseItemsTransformer extends ModelTransformerAbstract
@@ -79,7 +79,7 @@ class QuestionnaireResponseItemsTransformer extends ModelTransformerAbstract
         return $items;
     }
 
-    public function transformLoad(ModelAbstract $model, array $data, $new = false, $isPostData = false): array
+    public function transformLoad(MetaModelInterface $model, array $data, $new = false, $isPostData = false): array
     {
         $tokensBySource = [];
         $sourceSurveyIds = [];

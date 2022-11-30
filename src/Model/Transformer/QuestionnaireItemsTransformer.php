@@ -4,7 +4,7 @@ namespace Gems\Api\Fhir\Model\Transformer;
 
 use Gems\Tracker\Source\SourceInterface;
 use Gems\Tracker\TrackerInterface;
-use MUtil\Model\ModelAbstract;
+use Zalt\Model\MetaModelInterface;
 use MUtil\Model\ModelTransformerAbstract;
 
 class QuestionnaireItemsTransformer extends ModelTransformerAbstract
@@ -192,7 +192,7 @@ class QuestionnaireItemsTransformer extends ModelTransformerAbstract
         return $this->tracker->getSource($sourceId);
     }
 
-    public function transformLoad(ModelAbstract $model, array $data, $new = false, $isPostData = false): array
+    public function transformLoad(MetaModelInterface $model, array $data, $new = false, $isPostData = false): array
     {
         foreach($data as $key=>$row) {
             $source = $this->getSource($row['gsu_id_source']);
