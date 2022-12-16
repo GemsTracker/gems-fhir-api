@@ -10,6 +10,9 @@ trait RespondentTrackFields
 {
     protected function getDisplayValue(array $trackFieldInfo): ?string
     {
+        if ($trackFieldInfo['gr2t2f_value'] === null) {
+            return null;
+        }
         return match ($trackFieldInfo['gtf_field_type']) {
             'caretaker' => $this->getCaretakerName($trackFieldInfo['gr2t2f_value']),
             'location' => $this->getLocationName($trackFieldInfo['gr2t2f_value']),
