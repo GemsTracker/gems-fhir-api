@@ -11,6 +11,7 @@ use Gems\Api\Fhir\Model\Transformer\QuestionnaireTaskInfoTransformer;
 use Gems\Api\Fhir\Model\Transformer\QuestionnaireOwnerTransformer;
 use Gems\Api\Fhir\Model\Transformer\QuestionnaireTaskStatusTransformer;
 use Gems\Model\JoinModel;
+use Mezzio\Helper\UrlHelper;
 
 class QuestionnaireTaskModel extends JoinModel
 {
@@ -18,10 +19,11 @@ class QuestionnaireTaskModel extends JoinModel
      * @var \Zend_Db_Adapter_Abstract
      */
     protected $db;
+
     /**
-     * @var \Gems_Util
+     * @var UrlHelper
      */
-    public $util;
+    protected $urlHelper;
 
     public function __construct()
     {
@@ -86,7 +88,7 @@ class QuestionnaireTaskModel extends JoinModel
 
     public function afterRegistry()
     {
-        $currentUri = $this->util->getCurrentURI();
+        $currentUri = $this->urlHelper->getBasePath();
 
         $this->addTransformer(new QuestionnaireTaskStatusTransformer());
         $this->addTransformer(new QuestionnaireTaskExecutionPeriodTransformer());
