@@ -12,10 +12,10 @@ class QuestionnaireSubjectTypeTransformer extends ModelTransformerAbstract
         if (isset($filter['subjectType'])) {
             switch(strtolower($filter['subjectType'])) {
                 case 'patient':
-                    $filter['ggp_respondent_members'] = 1;
+                    $filter['ggp_member_type'] = 'respondent';
                     break;
                 case 'practitioner':
-                    $filter['ggp_staff_members'] = 1;
+                    $filter['ggp_member_type'] = 'staff';
                     break;
             }
         }
