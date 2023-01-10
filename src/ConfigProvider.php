@@ -20,6 +20,11 @@ use Gems\Api\RestModelConfigProviderAbstract;
 
 class ConfigProvider extends RestModelConfigProviderAbstract
 {
+    public function __construct(string $pathPrefix = '/api/fhir')
+    {
+        $this->pathPrefix = $pathPrefix;
+    }
+
     /**
      * Returns the configuration array
      *
@@ -32,7 +37,12 @@ class ConfigProvider extends RestModelConfigProviderAbstract
     {
         return [
             'dependencies' => $this->getDependencies(),
-            'routes'       => $this->getRoutes(),
+            'routes' => $this->routeGroup([
+                'path' => $this->pathPrefix,
+                'middleware' => $this->getMiddleware(),
+            ],
+                $this->getRoutes()
+            ),
         ];
     }
 
@@ -41,13 +51,14 @@ class ConfigProvider extends RestModelConfigProviderAbstract
         return [];
     }
 
-    public function getRestModels(): array
+    public function getRoutes(bool $includeModelRoutes = true): array
     {
         return [
-            'fhir/patient' => [
-                'model' => PatientModel::class,
-                'methods' => ['GET'],
-                'allowed_fields' => [
+            ...$this->createModelRoute(
+                endpoint: 'patient',
+                model: PatientModel::class,
+                methods: ['GET'],
+                allowedFields: [
                     'resourceType',
                     'id',
                     'active',
@@ -59,14 +70,15 @@ class ConfigProvider extends RestModelConfigProviderAbstract
                     'created',
                     'changed',
                 ],
-                'idField' => 'id',
-                'idFieldRegex' => '[A-Za-z0-9\-@]+',
-                'patientIdField' => 'id',
-            ],
-            'fhir/appointment' => [
-                'model' => AppointmentModel::class,
-                'methods' => ['GET'],
-                'allowed_fields' => [
+                idField: 'id',
+                idRegex: '[A-Za-z0-9\-@]+',
+                patientIdField: 'id',
+            ),
+            ...$this->createModelRoute(
+                endpoint: 'appointment',
+                model: AppointmentModel::class,
+                methods: ['GET'],
+                allowedFields: [
                     'resourceType',
                     'id',
                     'status',
@@ -80,13 +92,14 @@ class ConfigProvider extends RestModelConfigProviderAbstract
                     'created',
                     'changed',
                 ],
-                'idField' => 'id',
-                'patientIdField' => 'patient',
-            ],
-            'fhir/episode-of-care' => [
-                'model' => EpisodeOfCareModel::class,
-                'methods' => ['GET'],
-                'allowed_fields' => [
+                idField: 'id',
+                patientIdField: 'patient',
+            ),
+            ...$this->createModelRoute(
+                endpoint: 'episode-of-care',
+                model: EpisodeOfCareModel::class,
+                methods: ['GET'],
+                allowedFields: [
                     'resourceType',
                     'id',
                     'status',
@@ -98,13 +111,14 @@ class ConfigProvider extends RestModelConfigProviderAbstract
                     'serviceType',
                     'participant',
                 ],
-                'idField' => 'id',
-                'patientIdField' => 'patient',
-            ],
-            'fhir/location' => [
-                'model' => LocationModel::class,
-                'methods' => ['GET'],
-                'allowed_fields' => [
+                idField: 'id',
+                patientIdField: 'patient',
+            ),
+            ...$this->createModelRoute(
+                endpoint: 'location',
+                model: LocationModel::class,
+                methods: ['GET'],
+                allowedFields: [
                     'resourceType',
                     'id',
                     'status',
@@ -112,11 +126,12 @@ class ConfigProvider extends RestModelConfigProviderAbstract
                     'telecom',
                     'address',
                 ],
-            ],
-            'fhir/organization' => [
-                'model' => OrganizationModel::class,
-                'methods' => ['GET'],
-                'allowed_fields' => [
+            ),
+            ...$this->createModelRoute(
+                endpoint: 'organization',
+                model: OrganizationModel::class,
+                methods: ['GET'],
+                allowedFields: [
                     'resourceType',
                     'id',
                     'active',
@@ -125,11 +140,12 @@ class ConfigProvider extends RestModelConfigProviderAbstract
                     'telecom',
                     'contact',
                 ],
-            ],
-            'fhir/practitioner' => [
-                'model' => PractitionerModel::class,
-                'methods' => ['GET'],
-                'allowed_fields' => [
+            ),
+            ...$this->createModelRoute(
+                endpoint: 'practitioner',
+                model: PractitionerModel::class,
+                methods: ['GET'],
+                allowedFields: [
                     'resourceType',
                     'id',
                     'active',
@@ -137,11 +153,12 @@ class ConfigProvider extends RestModelConfigProviderAbstract
                     'gender',
                     'telecom',
                 ],
-            ],
-            'fhir/related-person' => [
-                'model' => RelatedPersonModel::class,
-                'methods' => ['GET'],
-                'allowed_fields' => [
+            ),
+            ...$this->createModelRoute(
+                endpoint: 'related-person',
+                model: RelatedPersonModel::class,
+                methods: ['GET'],
+                allowedFields: [
                     'resourceType',
                     'id',
                     'active',
@@ -151,12 +168,12 @@ class ConfigProvider extends RestModelConfigProviderAbstract
                     'telecom',
                     'birthdate',
                 ],
-            ],
-
-            'fhir/questionnaire' => [
-                'model' => QuestionnaireModel::class,
-                'methods' => ['GET'],
-                'allowed_fields' => [
+            ),
+            ...$this->createModelRoute(
+                endpoint: 'questionnaire',
+                model: QuestionnaireModel::class,
+                methods: ['GET'],
+                allowedFields: [
                     'resourceType',
                     'id',
                     'status',
@@ -166,12 +183,13 @@ class ConfigProvider extends RestModelConfigProviderAbstract
                     'subjectType',
                     'item',
                 ],
-            ],
-            'fhir/questionnaire-task' => [
-                'model' => QuestionnaireTaskModel::class,
-                'methods' => ['GET', 'PATCH'],
-                'idFieldRegex' => '[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}',
-                'allowed_fields' => [
+            ),
+            ...$this->createModelRoute(
+                endpoint: 'questionnaire-task',
+                model: QuestionnaireTaskModel::class,
+                methods: ['GET', 'PATCH'],
+                idRegex: '[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}',
+                allowedFields: [
                     'resourceType',
                     'id',
                     'status',
@@ -188,7 +206,7 @@ class ConfigProvider extends RestModelConfigProviderAbstract
                     'info',
                     'carePlanSuccess',
                 ],
-                'allowed_save_fields' => [
+                allowedSaveFields: [
                     'executionPeriod',
                     'status',
                     'gto_id_token',
@@ -197,16 +215,17 @@ class ConfigProvider extends RestModelConfigProviderAbstract
                     'gto_id_track',
                     'gto_id_survey',
                 ],
-                'patientIdField' => [
+                patientIdField: [
                     'for',
                     'patient',
                 ],
-            ],
-            'fhir/questionnaire-response' => [
-                'model' => QuestionnaireResponseModel::class,
-                'methods' => ['GET'],
-                'idFieldRegex' => '[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}',
-                'allowed_fields' => [
+            ),
+            ...$this->createModelRoute(
+                endpoint: 'questionnaire-response',
+                model: QuestionnaireResponseModel::class,
+                methods: ['GET'],
+                idRegex: '[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}',
+                allowedFields: [
                     'resourceType',
                     'id',
                     'status',
@@ -217,15 +236,16 @@ class ConfigProvider extends RestModelConfigProviderAbstract
                     'author',
                     'item',
                 ],
-                'patientIdField' => [
+                patientIdField: [
                     'patient',
                     'subject'
                 ],
-            ],
-            'fhir/care-plan' => [
-                'model' => CarePlanModel::class,
-                'methods' => ['GET'],
-                'allowed_fields' => [
+            ),
+            ...$this->createModelRoute(
+                endpoint: 'care-plan',
+                model: CarePlanModel::class,
+                methods: ['GET'],
+                allowedFields: [
                     'resourceType',
                     'id',
                     'status',
@@ -237,30 +257,30 @@ class ConfigProvider extends RestModelConfigProviderAbstract
                     'period',
                     'contributor',
                     'supportingInfo',
-                    'activity',
+                    'activity'
                 ],
-                'patientIdField' => [
+                patientIdField: [
                     'patient',
                     'subject'
                 ],
-            ],
-            'fhir/codesystem/service-type' => [
-                'model' => ServiceTypeModel::class,
-                'methods' => ['GET'],
-                'allowed_fields' => [
+            ),
+            ...$this->createModelRoute(
+                endpoint: 'codesystem/service-type',
+                model: ServiceTypeModel::class,
+                methods: ['GET'],
+                allowedFields: [
                     'code',
                     'display',
                     'name',
                     'telecom',
                     'contact',
                 ],
-                'idField' => 'code',
-            ],
+                idField: 'code',
+            ),
         ];
-    }
 
-    public function getRoutes(bool $includeModelRoutes = true): array
-    {
+
+
         $modelRoutes = parent::getRoutes($includeModelRoutes);
 
         $routes = [];
