@@ -5,12 +5,19 @@ namespace Gems\Api\Fhir\Model\Transformer;
 
 use Gems\Api\Fhir\Endpoints;
 use Zalt\Model\MetaModelInterface;
-use MUtil\Model\ModelTransformerAbstract;
+use Zalt\Model\Transform\ModelTransformerAbstract;
 
 class CarePlanInfoTransformer extends ModelTransformerAbstract
 {
     use RespondentTrackFields;
 
+    /**
+     * @param MetaModelInterface $model
+     * @param mixed[] $data
+     * @param $new
+     * @param $isPostData
+     * @return mixed[]
+     */
     public function transformLoad(MetaModelInterface $model, array $data, $new = false, $isPostData = false): array
     {
         foreach($data as $key=>$row) {

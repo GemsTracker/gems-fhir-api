@@ -5,7 +5,7 @@ namespace Gems\Api\Fhir\Model\Transformer;
 use Gems\Api\Fhir\Endpoints;
 use MUtil\Model\DatabaseModelAbstract;
 use Zalt\Model\MetaModelInterface;
-use MUtil\Model\ModelTransformerAbstract;
+use Zalt\Model\Transform\ModelTransformerAbstract;
 
 class CarePlanContributorTransformer extends ModelTransformerAbstract
 {
@@ -15,8 +15,8 @@ class CarePlanContributorTransformer extends ModelTransformerAbstract
      * b) adding filters that are needed
      *
      * @param MetaModelInterface $model
-     * @param array $filter
-     * @return array The (optionally changed) filter
+     * @param mixed[] $filter
+     * @return mixed[] The (optionally changed) filter
      */
     public function transformFilter(MetaModelInterface $model, array $filter): array
     {
@@ -49,6 +49,13 @@ class CarePlanContributorTransformer extends ModelTransformerAbstract
         return $filter;
     }
 
+    /**
+     * @param MetaModelInterface $model
+     * @param mixed[] $data
+     * @param $new
+     * @param $isPostData
+     * @return mixed[]
+     */
     public function transformLoad(MetaModelInterface $model, array $data, $new = false, $isPostData = false): array
     {
         foreach($data as $key=>$row) {

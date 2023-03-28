@@ -20,10 +20,8 @@ use Gems\Api\RestModelConfigProviderAbstract;
 
 class ConfigProvider extends RestModelConfigProviderAbstract
 {
-    public function __construct(string $pathPrefix = '/api/fhir')
-    {
-        $this->pathPrefix = $pathPrefix;
-    }
+    public function __construct(protected string $pathPrefix = '/api/fhir')
+    {}
 
     /**
      * Returns the configuration array
@@ -31,7 +29,7 @@ class ConfigProvider extends RestModelConfigProviderAbstract
      * To add a bit of a structure, each section is defined in a separate
      * method which returns an array with its configuration.
      *
-     * @return array
+     * @return mixed[]
      */
     public function __invoke(): array
     {
@@ -46,11 +44,18 @@ class ConfigProvider extends RestModelConfigProviderAbstract
         ];
     }
 
+    /**
+     * @return string[]
+     */
     public function getDependencies(): array
     {
         return [];
     }
 
+    /**
+     * @param bool $includeModelRoutes
+     * @return mixed[]
+     */
     public function getRoutes(bool $includeModelRoutes = true): array
     {
         return [
@@ -278,14 +283,6 @@ class ConfigProvider extends RestModelConfigProviderAbstract
                 idField: 'code',
             ),
         ];
-
-
-
-        $modelRoutes = parent::getRoutes($includeModelRoutes);
-
-        $routes = [];
-
-        return array_merge($routes, $modelRoutes);
     }
 
 }

@@ -5,10 +5,17 @@ namespace Gems\Api\Fhir\Model\Transformer;
 use DateTimeInterface;
 use DateTimeImmutable;
 use Zalt\Model\MetaModelInterface;
-use MUtil\Model\ModelTransformerAbstract;
+use Zalt\Model\Transform\ModelTransformerAbstract;
 
 class CarePlanPeriodTransformer extends ModelTransformerAbstract
 {
+    /**
+     * @param MetaModelInterface $model
+     * @param mixed[] $data
+     * @param $new
+     * @param $isPostData
+     * @return mixed[]
+     */
     public function transformLoad(MetaModelInterface $model, array $data, $new = false, $isPostData = false): array
     {
         foreach ($data as $key => $row) {

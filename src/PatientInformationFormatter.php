@@ -7,10 +7,13 @@ namespace Gems\Api\Fhir;
 class PatientInformationFormatter
 {
     /**
-     * @var array
+     * @var mixed[]
      */
     protected array $data;
 
+    /**
+     * @param mixed[] $data
+     */
     public function __construct(array $data)
     {
         $this->data = $data;

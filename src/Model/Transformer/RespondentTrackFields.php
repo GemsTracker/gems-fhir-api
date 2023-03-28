@@ -8,6 +8,10 @@ use MUtil\Model\UnionModel;
 
 trait RespondentTrackFields
 {
+    /**
+     * @param mixed[] $trackFieldInfo
+     * @return string|null
+     */
     protected function getDisplayValue(array $trackFieldInfo): ?string
     {
         if ($trackFieldInfo['gr2t2f_value'] === null) {
@@ -40,6 +44,10 @@ trait RespondentTrackFields
         return null;
     }
 
+    /**
+     * @param int $respondentTrackId
+     * @return mixed[]
+     */
     protected function getTrackfields(int $respondentTrackId): array
     {
         $model = $this->getTrackfieldModel();

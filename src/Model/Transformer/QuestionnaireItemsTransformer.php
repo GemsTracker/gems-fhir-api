@@ -5,7 +5,7 @@ namespace Gems\Api\Fhir\Model\Transformer;
 use Gems\Tracker\Source\SourceInterface;
 use Gems\Tracker\TrackerInterface;
 use Zalt\Model\MetaModelInterface;
-use MUtil\Model\ModelTransformerAbstract;
+use Zalt\Model\Transform\ModelTransformerAbstract;
 
 class QuestionnaireItemsTransformer extends ModelTransformerAbstract
 {
@@ -25,6 +25,11 @@ class QuestionnaireItemsTransformer extends ModelTransformerAbstract
         $this->language = $language;
     }
 
+    /**
+     * @param mixed[] $questionInformation
+     * @param int $lsSurveyId
+     * @return mixed[]
+     */
     protected function getItems(array $questionInformation, int $lsSurveyId): array
     {
         $groups = [];
@@ -87,7 +92,7 @@ class QuestionnaireItemsTransformer extends ModelTransformerAbstract
         return array_values($groups);
     }
 
-    protected function getQuestionType(string $type, $isSub): ?string
+    protected function getQuestionType(string $type, bool $isSub): ?string
     {
         switch ($type) {
             case '5': // 5 point choice
@@ -191,7 +196,13 @@ class QuestionnaireItemsTransformer extends ModelTransformerAbstract
     {
         return $this->tracker->getSource($sourceId);
     }
-
+    /**
+     * @param MetaModelInterface $model
+     * @param mixed[] $data
+     * @param $new
+     * @param $isPostData
+     * @return mixed[]
+     */
     public function transformLoad(MetaModelInterface $model, array $data, $new = false, $isPostData = false): array
     {
         foreach($data as $key=>$row) {

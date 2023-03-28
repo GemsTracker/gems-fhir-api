@@ -11,16 +11,13 @@ use Gems\Api\Fhir\Model\Transformer\IntTransformer;
 use Gems\Api\Fhir\Model\Transformer\PatientReferenceTransformer;
 use Gems\Model\JoinModel;
 use Gems\Tracker;
+use MUtil\Translate\Translator;
 
 class CarePlanModel extends JoinModel
 {
-    /**
-     * @var Tracker
-     */
-    protected $tracker;
-
-    public function __construct()
+    public function __construct(protected Tracker $tracker, Translator $translator)
     {
+        $this->translate = $translator;
         parent::__construct('carePlan', 'gems__respondent2track', 'gr2t', true);
         $this->addTable(
             'gems__respondents',
@@ -101,7 +98,7 @@ END'), 'status');
         $this->addTransformers();
     }
 
-    protected function addTransformers()
+    protected function addTransformers(): void
     {
         $this->addTransformer(new IntTransformer(['gr2t_id_respondent_track']));
         $this->addTransformer(new PatientReferenceTransformer('subject'));

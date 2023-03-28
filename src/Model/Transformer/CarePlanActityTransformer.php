@@ -5,7 +5,7 @@ namespace Gems\Api\Fhir\Model\Transformer;
 use Gems\Api\Fhir\Endpoints;
 use Gems\Tracker\TrackerInterface;
 use Zalt\Model\MetaModelInterface;
-use MUtil\Model\ModelTransformerAbstract;
+use Zalt\Model\Transform\ModelTransformerAbstract;
 
 class CarePlanActityTransformer extends ModelTransformerAbstract
 {
@@ -19,6 +19,13 @@ class CarePlanActityTransformer extends ModelTransformerAbstract
         $this->tracker = $tracker;
     }
 
+    /**
+     * @param MetaModelInterface $model
+     * @param mixed[] $data
+     * @param $new
+     * @param $isPostData
+     * @return mixed[]
+     */
     public function transformLoad(MetaModelInterface $model, array $data, $new = false, $isPostData = false): array
     {
         foreach ($data as $key => $row) {
@@ -43,7 +50,12 @@ class CarePlanActityTransformer extends ModelTransformerAbstract
         return $data;
     }
 
-    protected function getTrackTokens($respondentTrackId): array
+    /**
+     * @param int $respondentTrackId
+     * @return mixed[]
+     * @throws \Zend_Db_Select_Exception
+     */
+    protected function getTrackTokens(int $respondentTrackId): array
     {
         $tokenSelect = $this->tracker->getTokenSelect(['gto_id_token']);
         $tokenSelect->andReceptionCodes([]);

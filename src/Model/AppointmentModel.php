@@ -4,20 +4,45 @@
 namespace Gems\Api\Fhir\Model;
 
 
+use Gems\Agenda\Agenda;
 use Gems\Api\Fhir\Model\Transformer\AppointmentParticipantTransformer;
 use Gems\Api\Fhir\Model\Transformer\AppointmentServiceTypeTransformer;
 use Gems\Api\Fhir\Model\Transformer\AppointmentStatusTransformer;
 use Gems\Api\Fhir\Model\Transformer\IntTransformer;
+use Gems\Model\JoinModel;
+use MUtil\Translate\Translator;
 
-class AppointmentModel extends \Gems\Model\AppointmentModel
+class AppointmentModel extends JoinModel
 {
-    public function __construct()
+    public function __construct(protected Agenda $agenda, Translator $translator)
     {
-        parent::__construct();
+        $this->translate = $translator;
+        parent::__construct('appointments', 'gems__appointments', 'gap');
 
-        //$this->addColumn(new \Zend_Db_Expr('CONCAT(gr2o_patient_nr, "@", gr2o_id_organization)'), 'identifier');
-        //$this->addColumn('grc_success', 'active');
-        //$this->addColumn(new \Zend_Db_Expr("CASE grs_gender WHEN 'M' THEN 'male' WHEN 'F' THEN 'female' ELSE 'unknown' END"), 'gender');
+        $this->addTable(
+            'gems__respondent2org',
+            array('gap_id_user' => 'gr2o_id_user', 'gap_id_organization' => 'gr2o_id_organization'),
+            'gr2o',
+            false
+        );
+
+        $this->addColumn(new \Zend_Db_Expr("'appointment'"), \Gems\Model::ID_TYPE);
+        $this->setKeys(array(\Gems\Model::APPOINTMENT_ID => 'gap_id_appointment'));
+
+        $codes = $this->agenda->getStatusCodesInactive();
+        if (isset($codes['CA'])) {
+            $cancelCode = 'CA';
+        } elseif ($codes) {
+            reset($codes);
+            $cancelCode = key($codes);
+        } else {
+            $cancelCode = null;
+        }
+        if ($cancelCode) {
+            $this->setDeleteValues('gap_status', $cancelCode);
+        }
+
+
 
         $this->addTable('gems__respondents', ['grs_id_user' =>  'gap_id_user'], 'grs');
         $this->addTable('gems__organizations', ['gap_id_organization' => 'gor_id_organization'],'gor');
@@ -28,37 +53,88 @@ class AppointmentModel extends \Gems\Model\AppointmentModel
         $this->addColumn('gap_admission_time', 'admission_date');
         $this->addColumn(new \Zend_Db_Expr('\'Appointment\''), 'resourceType');
 
-        $this->set('resourceType', 'label', 'resourceType');
+        $this->set('resourceType', [
+            'label' => 'resourceType',
+        ]);
 
-        $this->set('gap_id_appointment', 'label', 'id', 'apiName', 'id');
-        $this->set('gap_status', 'label', 'active', 'apiName', 'status');
-        $this->set('gap_admission_time', 'label', 'start', 'apiName', 'start');
+        $this->set('gap_id_appointment', [
+            'label' => 'id',
+            'apiName' => 'id'
+        ]);
+        $this->set('gap_status', [
+            'label' => 'active',
+            'apiName', 'status',
+        ]);
+        $this->set('gap_admission_time', [
+            'label' => 'start',
+            'apiName', 'start',
+        ]);
         // Search options
-        $this->set('admission_date', 'label', 'date', 'apiName', 'date');
+        $this->set('admission_date', [
+            'label' => 'date',
+            'apiName', 'date',
+        ]);
 
-        $this->set('gap_discharge_time', 'label', 'end', 'apiName', 'end');
-        $this->set('gap_created', 'label', 'created', 'apiName', 'created');
-        $this->set('gap_subject', 'label', 'comment', 'apiName', 'comment');
-        $this->set('gap_comment', 'label', 'description', 'apiName', 'description');
+        $this->set('gap_discharge_time', [
+            'label' => 'end',
+            'apiName', 'end',
+        ]);
+        $this->set('gap_created', [
+            'label' => 'created',
+            'apiName', 'created',
+        ]);
+        $this->set('gap_subject', [
+            'label' => 'comment',
+            'apiName', 'comment',
+        ]);
+        $this->set('gap_comment', [
+            'label' => 'description',
+            'apiName', 'description',
+        ]);
 
-        $this->set('serviceType', 'label', 'serviceType');
+        $this->set('serviceType', [
+            'label' => 'serviceType'
+        ]);
 
-        $this->set('gap_created', 'label', 'created', 'apiName', 'created');
-        $this->set('gap_changed', 'label', 'changed', 'apiName', 'changed');
+        $this->set('gap_created', [
+            'label' => 'created',
+            'apiName', 'created',
+        ]);
+        $this->set('gap_changed', [
+            'label' => 'changed',
+            'apiName', 'changed',
+        ]);
 
         // Search options
-        $this->set('service-type', 'label', 'service-type');
-        $this->set('service-type.display', 'label', 'service-type.display');
+        $this->set('service-type', [
+            'label' => 'service-type',
+        ]);
+        $this->set('service-type.display', [
+            'label' => 'service-type.display',
+        ]);
 
-        $this->set('participant', 'label', 'participant');
+        $this->set('participant', [
+            'label' => 'participant',
+        ]);
         // Search options
-        $this->set('patient', 'label', 'patient');
-        $this->set('patient.email', 'label', 'patient.email');
-        $this->set('practitioner', 'label', 'practitioner');
-        $this->set('practitioner.name', 'label', 'practitioner.name');
-        $this->set('location', 'label', 'location');
-        $this->set('location.name', 'label', 'location.name');
-
+        $this->set('patient', [
+            'label' => 'patient',
+        ]);
+        $this->set('patient.email', [
+            'label' => 'patient.email',
+        ]);
+        $this->set('practitioner', [
+            'label' => 'practitioner',
+        ]);
+        $this->set('practitioner.name', [
+            'label' => 'practitioner.name',
+        ]);
+        $this->set('location', [
+            'label' => 'location',
+        ]);
+        $this->set('location.name', [
+            'label' => 'location.name',
+        ]);
 
         $this->addTransformer(new AppointmentStatusTransformer());
         $this->addTransformer(new AppointmentServiceTypeTransformer());

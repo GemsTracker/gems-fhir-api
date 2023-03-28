@@ -5,20 +5,19 @@ namespace Gems\Api\Fhir\Model\Transformer;
 use Gems\Api\Fhir\Endpoints;
 use MUtil\Model\DatabaseModelAbstract;
 use Zalt\Model\MetaModelInterface;
-use MUtil\Model\ModelTransformerAbstract;
+use Zalt\Model\Transform\ModelTransformerAbstract;
 
 class QuestionnaireReferenceTransformer extends ModelTransformerAbstract
 {
-    protected string $dbField;
 
-    protected string $field;
+    public function __construct(protected string $field = 'questionnaire', protected string $dbField = 'gsu_id_survey')
+    {}
 
-    public function __construct($field = 'questionnaire', $dbField = 'gsu_id_survey')
-    {
-        $this->dbField = $dbField;
-        $this->field = $field;
-    }
-
+    /**
+     * @param MetaModelInterface $model
+     * @param mixed[] $filter
+     * @return mixed[]
+     */
     public function transformFilter(MetaModelInterface $model, array $filter): array
     {
         if (isset($filter['survey'])) {
@@ -69,7 +68,13 @@ class QuestionnaireReferenceTransformer extends ModelTransformerAbstract
 
         return $filter;
     }
-
+    /**
+     * @param MetaModelInterface $model
+     * @param mixed[] $data
+     * @param $new
+     * @param $isPostData
+     * @return mixed[]
+     */
     public function transformLoad(MetaModelInterface $model, array $data, $new = false, $isPostData = false): array
     {
         foreach($data as $key=>$row) {

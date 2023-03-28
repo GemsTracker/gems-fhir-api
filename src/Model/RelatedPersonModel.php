@@ -7,7 +7,7 @@ use Gems\Api\Fhir\Model\Transformer\BooleanTransformer;
 use Gems\Api\Fhir\Model\Transformer\PatientReferenceTransformer;
 use Gems\Api\Fhir\Model\Transformer\RelatedPersonHumanNameTransformer;
 use Gems\Api\Fhir\Model\Transformer\RelatedPersonTelecomTransformer;
-use MUtil\Model\JoinModel;
+use Gems\Model\JoinModel;
 
 class RelatedPersonModel extends JoinModel
 {

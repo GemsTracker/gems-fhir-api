@@ -5,7 +5,7 @@ namespace Gems\Api\Fhir\Model\Transformer;
 
 use Gems\Tracker\TrackerInterface;
 use Zalt\Model\MetaModelInterface;
-use MUtil\Model\ModelTransformerAbstract;
+use Zalt\Model\Transform\ModelTransformerAbstract;
 
 class QuestionnaireResponseItemsTransformer extends ModelTransformerAbstract
 {
@@ -25,6 +25,11 @@ class QuestionnaireResponseItemsTransformer extends ModelTransformerAbstract
         $this->language = $language;
     }
 
+    /**
+     * @param mixed[] $tokenAnswers
+     * @param mixed[] $surveyInformation
+     * @return mixed[]
+     */
     protected function getItemsFromAnswers(array $tokenAnswers, array $surveyInformation): array
     {
         $items = [];
@@ -78,13 +83,19 @@ class QuestionnaireResponseItemsTransformer extends ModelTransformerAbstract
 
         return $items;
     }
-
+    /**
+     * @param MetaModelInterface $model
+     * @param mixed[] $data
+     * @param $new
+     * @param $isPostData
+     * @return mixed[]
+     */
     public function transformLoad(MetaModelInterface $model, array $data, $new = false, $isPostData = false): array
     {
         $tokensBySource = [];
         $sourceSurveyIds = [];
         foreach($data as $row) {
-            $tokensBySource[$row['gsu_id_source']][$row['gto_id_survey']][] = $row['gto_id_token'];
+            $tokensBySource[$row['gsu_id_source']][(int)$row['gto_id_survey']][] = $row['gto_id_token'];
             $sourceSurveyIds[$row['gto_id_survey']] = $row['gsu_surveyor_id'];
         }
 
@@ -100,7 +111,7 @@ class QuestionnaireResponseItemsTransformer extends ModelTransformerAbstract
         }
 
         foreach ($data as $key => $row) {
-            $tokenId = str_replace('-', '_', $row['gto_id_token']);
+            $tokenId = str_replace('-', '_', (string)$row['gto_id_token']);
             if (isset($tokenItems[$tokenId])) {
                 $data[$key]['item'] = $tokenItems[$tokenId];
             }

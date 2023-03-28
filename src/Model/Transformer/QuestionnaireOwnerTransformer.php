@@ -6,7 +6,7 @@ namespace Gems\Api\Fhir\Model\Transformer;
 use Gems\Api\Fhir\Endpoints;
 use Gems\Api\Fhir\PatientInformationFormatter;
 use Zalt\Model\MetaModelInterface;
-use MUtil\Model\ModelTransformerAbstract;
+use Zalt\Model\Transform\ModelTransformerAbstract;
 
 class QuestionnaireOwnerTransformer extends ModelTransformerAbstract
 {
@@ -17,6 +17,11 @@ class QuestionnaireOwnerTransformer extends ModelTransformerAbstract
         $this->fieldName = $fieldName;
     }
 
+    /**
+     * @param MetaModelInterface $model
+     * @param mixed[] $filter
+     * @return mixed[]
+     */
     public function transformFilter(MetaModelInterface $model, array $filter): array
     {
         if (isset($filter[$this->fieldName . '_name'])) {
@@ -72,7 +77,7 @@ class QuestionnaireOwnerTransformer extends ModelTransformerAbstract
             }
 
             if (str_starts_with($id, 'Patient/') || str_starts_with($id, Endpoints::PATIENT) || $ownerType == 'patient') {
-                list($patientNr, $organizationId) = str_replace(['Patient/', Endpoints::PATIENT], '', $id);
+                list($patientNr, $organizationId) = explode('@', str_replace(['Patient/', Endpoints::PATIENT], '', $id));
                 $filter['gr2o_patient_nr'] = $patientNr;
                 $filter['gr2o_id_organization'] = $organizationId;
 
@@ -141,10 +146,10 @@ class QuestionnaireOwnerTransformer extends ModelTransformerAbstract
      * the loading of the data in the source model.
      *
      * @param MetaModelInterface $model The parent model
-     * @param array $data Nested array
+     * @param mixed[] $data Nested array
      * @param boolean $new True when loading a new item
      * @param boolean $isPostData With post data, unselected multiOptions values are not set so should be added
-     * @return array Nested array containing (optionally) transformed data
+     * @return mixed[] Nested array containing (optionally) transformed data
      */
     public function transformLoad(MetaModelInterface $model, array $data, $new = false, $isPostData = false): array
     {
@@ -170,6 +175,10 @@ class QuestionnaireOwnerTransformer extends ModelTransformerAbstract
         return $data;
     }
 
+    /**
+     * @param mixed[] $row
+     * @return string[]
+     */
     protected function getOrganizationReference(array $row): array
     {
         return [
@@ -180,6 +189,10 @@ class QuestionnaireOwnerTransformer extends ModelTransformerAbstract
         ];
     }
 
+    /**
+     * @param mixed[] $row
+     * @return string[]|null[]
+     */
     protected function getPatientReference(array $row): array
     {
         $information = new PatientInformationFormatter($row);
@@ -191,6 +204,10 @@ class QuestionnaireOwnerTransformer extends ModelTransformerAbstract
         ];
     }
 
+    /**
+     * @param mixed[] $row
+     * @return string[]
+     */
     protected function getPractitionerReference(array $row): array
     {
         return [
@@ -201,6 +218,10 @@ class QuestionnaireOwnerTransformer extends ModelTransformerAbstract
         ];
     }
 
+    /**
+     * @param mixed[] $row
+     * @return string[]
+     */
     protected function getRelationReference(array $row): array
     {
         $name = '';

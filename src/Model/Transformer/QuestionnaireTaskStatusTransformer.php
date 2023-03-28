@@ -5,7 +5,7 @@ namespace Gems\Api\Fhir\Model\Transformer;
 use DateTimeInterface;
 use DateTimeImmutable;
 use Zalt\Model\MetaModelInterface;
-use MUtil\Model\ModelTransformerAbstract;
+use Zalt\Model\Transform\ModelTransformerAbstract;
 
 class QuestionnaireTaskStatusTransformer extends ModelTransformerAbstract
 {
@@ -21,6 +21,11 @@ class QuestionnaireTaskStatusTransformer extends ModelTransformerAbstract
         };
     }
 
+    /**
+     * @param MetaModelInterface $model
+     * @param mixed[] $filter
+     * @return mixed[]
+     */
     public function transformFilter(MetaModelInterface $model, array $filter): array
     {
         if (isset($filter['status'])) {
@@ -44,7 +49,14 @@ class QuestionnaireTaskStatusTransformer extends ModelTransformerAbstract
         return $filter;
     }
 
-
+    /**
+     * @param MetaModelInterface $model
+     * @param mixed[] $data
+     * @param $new
+     * @param $isPostData
+     * @return mixed[]
+     * @throws \Exception
+     */
     public function transformLoad(MetaModelInterface $model, array $data, $new = false, $isPostData = false): array
     {
         foreach($data as $key=>$row) {

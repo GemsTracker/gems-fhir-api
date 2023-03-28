@@ -4,35 +4,39 @@ namespace Gems\Api\Fhir\Model\Transformer;
 
 use Gems\Api\Fhir\Endpoints;
 use Zalt\Model\MetaModelInterface;
-use MUtil\Model\ModelTransformerAbstract;
+use Zalt\Model\Transform\ModelTransformerAbstract;
 
 class QuestionnaireTaskInfoTransformer extends ModelTransformerAbstract
 {
     /**
-     * @var ?string
+     * @var string
      */
-    protected ?string $currentUri;
+    protected string $currentUri;
 
     /**
      * @var \Zend_Db_Adapter_Abstract
      */
     protected \Zend_Db_Adapter_Abstract $db;
+
     /**
-     * @var array|null
+     * @var int[]|null
      */
-    protected ?array $respondentTrackReceptionCodes;
+    protected ?array $respondentTrackReceptionCodes = null;
 
     public function __construct(\Zend_Db_Adapter_Abstract $db, ?string $currentUri = null)
     {
         $this->db = $db;
-        $this->currentUri = $currentUri;
+        $this->currentUri = $currentUri ?? '/';
     }
 
+    /**
+     * @return int[]
+     */
     protected function getRespondentTrackReceptionCodes(): array
     {
         if (!$this->respondentTrackReceptionCodes) {
             $select = $this->db->select();
-            $select->from('gems__reception_codes', ['grc_id_reception_code' => 'grc_success'])
+            $select->from('gems__reception_codes', ['grc_id_reception_code', 'grc_success'])
                 ->where('grc_for_tracks = 1')
                 ->where('grc_active = 1');
 
@@ -42,6 +46,11 @@ class QuestionnaireTaskInfoTransformer extends ModelTransformerAbstract
         return $this->respondentTrackReceptionCodes;
     }
 
+    /**
+     * @param MetaModelInterface $model
+     * @param mixed[] $filter
+     * @return mixed[]
+     */
     public function transformFilter(MetaModelInterface $model, array $filter): array
     {
         if (isset($filter['roundDescription'])) {
@@ -78,7 +87,7 @@ class QuestionnaireTaskInfoTransformer extends ModelTransformerAbstract
             $receptionCodes = $this->getRespondentTrackReceptionCodes();
             $expectedStatus = (int)$filter['carePlanSuccess'];
 
-            $filteredReceptionCodes = array_filter($receptionCodes, function($value, $key) use ($expectedStatus) {
+            $filteredReceptionCodes = array_filter($receptionCodes, function($value) use ($expectedStatus) {
                 return $value == $expectedStatus;
             });
 
@@ -88,7 +97,13 @@ class QuestionnaireTaskInfoTransformer extends ModelTransformerAbstract
 
         return $filter;
     }
-
+    /**
+     * @param MetaModelInterface $model
+     * @param mixed[] $data
+     * @param $new
+     * @param $isPostData
+     * @return mixed[]
+     */
     public function transformLoad(MetaModelInterface $model, array $data, $new = false, $isPostData = false): array
     {
         foreach($data as $key=>$row) {
@@ -135,9 +150,14 @@ class QuestionnaireTaskInfoTransformer extends ModelTransformerAbstract
         return $data;
     }
 
+    /**
+     * @param mixed[] $row
+     * @return string
+     */
     protected function getLoginUrl(array $row): string
     {
-        if (array_key_exists('gor_url_base', $row) && $row['gor_url_base'] !== null && $baseUrls = explode(' ', $row['gor_url_base'])) {
+        $baseUrls = explode(' ', $row['gor_url_base']);
+        if (array_key_exists('gor_url_base', $row) && $row['gor_url_base'] !== null) {
             $baseUrl = reset($baseUrls);
             if (!empty($baseUrl)) {
                 return $baseUrl;

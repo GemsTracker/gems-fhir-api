@@ -4,11 +4,20 @@ namespace Gems\Api\Fhir\Model\Transformer;
 
 use DateTimeInterface;
 use DateTimeImmutable;
+use Zalt\Model\MetaModel;
 use Zalt\Model\MetaModelInterface;
-use MUtil\Model\ModelTransformerAbstract;
+use Zalt\Model\Transform\ModelTransformerAbstract;
 
 class QuestionnaireTaskExecutionPeriodTransformer extends ModelTransformerAbstract
 {
+    /**
+     * @param MetaModelInterface $model
+     * @param mixed[] $data
+     * @param $new
+     * @param $isPostData
+     * @return mixed[]
+     * @throws \Exception
+     */
     public function transformLoad(MetaModelInterface $model, array $data, $new = false, $isPostData = false): array
     {
         foreach ($data as $key => $row) {
@@ -43,6 +52,12 @@ class QuestionnaireTaskExecutionPeriodTransformer extends ModelTransformerAbstra
         return $data;
     }
 
+    /**
+     * @param MetaModelInterface $model
+     * @param mixed[] $row
+     * @return mixed[]
+     * @throws \Exception
+     */
     public function transformRowBeforeSave(MetaModelInterface $model, array $row): array
     {
         if (isset($row['executionPeriod'])) {
@@ -55,7 +70,7 @@ class QuestionnaireTaskExecutionPeriodTransformer extends ModelTransformerAbstra
                     $row['gto_valid_from_manual'] = 1;
                     $row['gto_valid_from'] = $start->format('Y-m-d H:i:s');
                 }
-                $model->remove('gto_valid_from', $model::SAVE_TRANSFORMER);
+                $model->remove('gto_valid_from', MetaModel::SAVE_TRANSFORMER);
             }
             if (array_key_exists('end', $row['executionPeriod'])) {
                 if ($row['executionPeriod']['end'] === null) {
@@ -66,7 +81,7 @@ class QuestionnaireTaskExecutionPeriodTransformer extends ModelTransformerAbstra
                     $row['gto_valid_until_manual'] = 1;
                     $row['gto_valid_until'] = $end->format('Y-m-d H:i:s');
                 }
-                $model->remove('gto_valid_until', $model::SAVE_TRANSFORMER);
+                $model->remove('gto_valid_until', MetaModel::SAVE_TRANSFORMER);
             }
         }
 

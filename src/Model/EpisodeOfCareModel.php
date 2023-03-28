@@ -9,11 +9,13 @@ use Gems\Api\Fhir\Model\Transformer\ManagingOrganizationTransformer;
 use Gems\Api\Fhir\Model\Transformer\PatientReferenceTransformer;
 use Gems\Model\JoinModel;
 use MUtil\Model\Type\JsonData;
+use MUtil\Translate\Translator;
 
 class EpisodeOfCareModel extends JoinModel
 {
-    public function __construct()
+    public function __construct(Translator $translator)
     {
+        $this->translate = $translator;
         parent::__construct('episodesofcare', 'gems__episodes_of_care', 'gec');
 
         $this->addColumn(new \Zend_Db_Expr('\'EpisodeOfCare\''), 'resourceType');

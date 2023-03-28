@@ -8,7 +8,7 @@ use Gems\Api\Fhir\Endpoints;
 use Gems\Api\Fhir\PatientInformationFormatter;
 use MUtil\Model\DatabaseModelAbstract;
 use Zalt\Model\MetaModelInterface;
-use MUtil\Model\ModelTransformerAbstract;
+use Zalt\Model\Transform\ModelTransformerAbstract;
 
 class AppointmentParticipantTransformer extends ModelTransformerAbstract
 {
@@ -18,8 +18,8 @@ class AppointmentParticipantTransformer extends ModelTransformerAbstract
      * b) adding filters that are needed
      *
      * @param MetaModelInterface $model
-     * @param array $filter
-     * @return array The (optionally changed) filter
+     * @param mixed[] $filter
+     * @return mixed[] The (optionally changed) filter
      */
     public function transformFilter(MetaModelInterface $model, array $filter): array
     {
@@ -53,7 +53,7 @@ class AppointmentParticipantTransformer extends ModelTransformerAbstract
             $filter['gr2o_email'] = $value;
         }
 
-        if (isset($filter['practitioner'])) {
+        if (isset($filter['practitioner']) && is_string($filter['practitioner'])) {
             $value = (int)str_replace(['Practitioner/', Endpoints::PRACTITIONER], '', $filter['practitioner']);
             $filter['gap_id_attended_by'] = $value;
 
@@ -116,10 +116,10 @@ class AppointmentParticipantTransformer extends ModelTransformerAbstract
      * the loading of the data in the source model.
      *
      * @param MetaModelInterface $model The parent model
-     * @param array $data Nested array
+     * @param mixed[] $data Nested array
      * @param boolean $new True when loading a new item
      * @param boolean $isPostData With post data, unselected multiOptions values are not set so should be added
-     * @return array Nested array containing (optionally) transformed data
+     * @return mixed[] Nested array containing (optionally) transformed data
      */
     public function transformLoad(MetaModelInterface $model, array $data, $new = false, $isPostData = false): array
     {

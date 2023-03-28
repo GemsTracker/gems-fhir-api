@@ -4,12 +4,18 @@
 namespace Gems\Api\Fhir\Model\Transformer;
 
 use Zalt\Model\MetaModelInterface;
-use MUtil\Model\ModelTransformerAbstract;
+use Zalt\Model\Transform\ModelTransformerAbstract;
 
 class IntTransformer extends ModelTransformerAbstract
 {
+    /**
+     * @var string[]
+     */
     protected array $fields;
 
+    /**
+     * @param string[] $fields
+     */
     public function __construct(array $fields)
     {
         $this->fields = $fields;
@@ -20,10 +26,10 @@ class IntTransformer extends ModelTransformerAbstract
      * the loading of the data in the source model.
      *
      * @param MetaModelInterface $model The parent model
-     * @param array $data Nested array
+     * @param mixed[] $data Nested array
      * @param boolean $new True when loading a new item
      * @param boolean $isPostData With post data, unselected multiOptions values are not set so should be added
-     * @return array Nested array containing (optionally) transformed data
+     * @return mixed[] Nested array containing (optionally) transformed data
      */
     public function transformLoad(MetaModelInterface $model, array $data, $new = false, $isPostData = false): array
     {
