@@ -4,29 +4,55 @@
 namespace Gems\Api\Fhir\Model;
 
 
-use Gems\Api\Fhir\Model\Transformer\BooleanTransformer;
 use Gems\Api\Fhir\Model\Transformer\OrganizationContactTransformer;
 use Gems\Api\Fhir\Model\Transformer\OrganizationTelecomTransformer;
+use Gems\Model\GemsJoinModel;
+use Gems\Model\MetaModelLoader;
+use Gems\Model\Type\BooleanType;
+use Laminas\Db\Sql\Expression;
+use Zalt\Base\TranslatorInterface;
+use Zalt\Model\Sql\SqlRunnerInterface;
 
-class OrganizationModel extends \Gems\Model\OrganizationModel
+class OrganizationModel extends GemsJoinModel
 {
-    public function __construct()
-    {
-        parent::__construct([]);
+    public function __construct(
+        MetaModelLoader $metaModelLoader,
+        SqlRunnerInterface $sqlRunner,
+        TranslatorInterface $translate,
+    ) {
+        parent::__construct('gems__organization', $metaModelLoader, $sqlRunner, $translate, 'organizations');
 
-        $this->addColumn(new \Zend_Db_Expr('\'Organization\''), 'resourceType');
+        $metaModel = $this->getMetaModel();
 
-        $this->set('resourceType', 'label', 'resourceType');
+        $this->addColumn(new Expression('\'Organization\''), 'resourceType');
 
-        $this->set('gor_id_organization', 'label','id', 'apiName', 'id');
-        $this->set('gor_active', 'label','active', 'apiName', 'active');
-        $this->set('gor_name', 'label','name', 'apiName', 'name');
-        $this->set('telecom', 'label','telecom');
-        $this->set('contact', 'label','contact');
-        $this->set('gor_code', 'label','code', 'apiName', 'code');
+        $metaModel->set('resourceType', 'label', 'resourceType');
 
-        $this->addTransformer(new OrganizationTelecomTransformer());
-        $this->addTransformer(new OrganizationContactTransformer());
-        $this->addTransformer(new BooleanTransformer(['gor_active']));
+        $metaModel->set('gor_id_organization', [
+            'label' => 'id',
+            'apiName' => 'id',
+        ]);
+        $metaModel->set('gor_active', [
+            'label' => 'active',
+            'apiName' => 'active',
+            'type' => new BooleanType(),
+        ]);
+        $metaModel->set('gor_name', [
+            'label' => 'name',
+            'apiName' => 'name',
+        ]);
+        $metaModel->set('telecom', [
+            'label' => 'telecom',
+        ]);
+        $metaModel->set('contact', [
+            'label' => 'contact',
+        ]);
+        $metaModel->set('gor_code', [
+            'label' => 'code',
+            'apiName' => 'code',
+        ]);
+
+        $metaModel->addTransformer(new OrganizationTelecomTransformer());
+        $metaModel->addTransformer(new OrganizationContactTransformer());
     }
 }

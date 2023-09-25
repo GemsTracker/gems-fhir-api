@@ -10,24 +10,27 @@ use Gems\Api\Fhir\Model\Transformer\QuestionnaireTaskForTransformer;
 use Gems\Api\Fhir\Model\Transformer\QuestionnaireTaskInfoTransformer;
 use Gems\Api\Fhir\Model\Transformer\QuestionnaireOwnerTransformer;
 use Gems\Api\Fhir\Model\Transformer\QuestionnaireTaskStatusTransformer;
-use Gems\Model\JoinModel;
+use Gems\Db\ResultFetcher;
+use Gems\Model\GemsJoinModel;
+use Gems\Model\MetaModelLoader;
+use Laminas\Db\Sql\Expression;
 use Mezzio\Helper\UrlHelper;
+use Zalt\Base\TranslatorInterface;
+use Zalt\Model\Sql\SqlRunnerInterface;
 
-class QuestionnaireTaskModel extends JoinModel
+class QuestionnaireTaskModel extends GemsJoinModel
 {
-    /**
-     * @var \Zend_Db_Adapter_Abstract
-     */
-    protected $db;
 
-    /**
-     * @var UrlHelper
-     */
-    protected $urlHelper;
+    public function __construct(
+        MetaModelLoader $metaModelLoader,
+        SqlRunnerInterface $sqlRunner,
+        TranslatorInterface $translate,
+        protected readonly ResultFetcher $resultFetcher,
+        protected readonly UrlHelper $urlHelper,
+    ) {
+        parent::__construct('gems__tokens', $metaModelLoader, $sqlRunner, $translate, 'questionaireTasks');
+        $metaModel = $this->getMetaModel();
 
-    public function __construct()
-    {
-        parent::__construct('questionairetasks', 'gems__tokens', 'gto', true);
         $this->addTable('gems__respondent2org', ['gr2o_id_user' => 'gto_id_respondent', 'gr2o_id_organization' => 'gto_id_organization']);
         $this->addTable('gems__respondent2track', ['gto_id_respondent_track' => 'gr2t_id_respondent_track']);
         $this->addTable('gems__reception_codes', ['gto_reception_code' => 'grc_id_reception_code']);
@@ -40,62 +43,125 @@ class QuestionnaireTaskModel extends JoinModel
         $this->addLeftTable('gems__respondent_relations', ['gto_id_respondent' => 'grr_id_respondent', 'gto_id_relation' => 'grr_id']);
 
 
-        $this->addColumn(new \Zend_Db_Expr('\'QuestionnaireTask\''), 'resourceType');
-        $this->addColumn(new \Zend_Db_Expr('\'routine\''), 'priority');
-        $this->addColumn(new \Zend_Db_Expr('\'order\''), 'intent');
+        $this->addColumn(new Expression('\'QuestionnaireTask\''), 'resourceType');
+        $this->addColumn(new Expression('\'routine\''), 'priority');
+        $this->addColumn(new Expression('\'order\''), 'intent');
 
-        $this->set('resourceType', 'label', 'resourceType');
-        $this->set('gto_id_token', 'label', 'id', 'apiName', 'id');
-        $this->set('status', 'label', 'status', 'apiName', 'status');
-        $this->set('gto_completion_time', 'label', 'completedAt', 'apiName', 'completedAt');
-        $this->set('priority', 'label', 'priority');
-        $this->set('intent', 'label', 'intent');
-        $this->set('owner', 'label', 'owner');
-        $this->set('gto_created', 'label', 'authoredOn', 'apiName', 'authoredOn');
-        $this->set('gto_changed', 'label', 'lastModified', 'apiName', 'lastModified');
-        $this->set('executionPeriod', 'label', 'executionPeriod');
+        $metaModel->set('resourceType', [
+            'label', 'resourceType',
+        ]);
+        $metaModel->set('gto_id_token', [
+            'label', 'id',
+            'apiName' => 'id',
+        ]);
+        $metaModel->set('status', [
+            'label', 'status',
+            'apiName' => 'status',
+        ]);
+        $metaModel->set('gto_completion_time', [
+            'label', 'completedAt',
+            'apiName' => 'completedAt',
+        ]);
+        $metaModel->set('priority', [
+            'label', 'priority',
+        ]);
+        $metaModel->set('intent', [
+            'label', 'intent',
+        ]);
+        $metaModel->set('owner', [
+            'label', 'owner',
+        ]);
+        $metaModel->set('gto_created', [
+            'label', 'authoredOn',
+            'apiName' => 'authoredOn',
+        ]);
+        $metaModel->set('gto_changed', [
+            'label', 'lastModified',
+            'apiName' => 'lastModified',
+        ]);
+        $metaModel->set('executionPeriod', [
+            'label', 'executionPeriod',
+        ]);
 
-        $this->set('managingOrganization', 'label', 'managingOrganization');
-        $this->set('info', 'label', 'info');
+        $metaModel->set('managingOrganization', [
+            'label', 'managingOrganization',
+        ]);
+        $metaModel->set('info', [
+            'label', 'info',
+        ]);
 
-        $this->set('patient', 'label', 'patient');
-        $this->set('for', 'label', 'for');
-        $this->set('owner.name', 'label', 'owner.name');
-        $this->set('owner_name', 'label', 'owner_name');
-        $this->set('owner.type', 'label', 'owner.type');
-        $this->set('owner_type', 'label', 'owner_type');
-        $this->set('survey', 'label', 'survey');
-        $this->set('survey_name', 'label', 'survey_name');
-        $this->set('survey_code', 'label', 'survey_code');
-        $this->set('questionnaire', 'label', 'questionnaire');
-        $this->set('questionnaire_name', 'label', 'questionnaire_name');
-        $this->set('questionnaire_code', 'label', 'questionnaire_code');
+        $metaModel->set('patient', [
+            'label', 'patient',
+        ]);
+        $metaModel->set('for', [
+            'label', 'for',
+        ]);
+        $metaModel->set('owner.name', [
+            'label', 'owner.name',
+        ]);
+        $metaModel->set('owner_name', [
+            'label', 'owner_name',
+        ]);
+        $metaModel->set('owner.type', [
+            'label', 'owner.type',
+        ]);
+        $metaModel->set('owner_type', [
+            'label', 'owner_type',
+        ]);
+        $metaModel->set('survey', [
+            'label', 'survey',
+        ]);
+        $metaModel->set('survey_name', [
+            'label', 'survey_name',
+        ]);
+        $metaModel->set('survey_code', [
+            'label', 'survey_code',
+        ]);
+        $metaModel->set('questionnaire', [
+            'label', 'questionnaire',
+        ]);
+        $metaModel->set('questionnaire_name', [
+            'label', 'questionnaire_name',
+        ]);
+        $metaModel->set('questionnaire_code', [
+            'label', 'questionnaire_code',
+        ]);
 
-        $this->set('roundDescription', 'label', 'roundDescription');
-        $this->set('track', 'label', 'track');
-        $this->set('track_name', 'label', 'track_name');
-        $this->set('track_code', 'label', 'track_code');
-        $this->set('carePlan', 'label', 'carePlan');
-        $this->set('carePlanSuccess', 'label', 'carePlanSuccess');
-        $this->set('respondentTrackId', 'label', 'respondentTrackId');
+        $metaModel->set('roundDescription', [
+            'label', 'roundDescription',
+        ]);
+        $metaModel->set('track', [
+            'label', 'track',
+        ]);
+        $metaModel->set('track_name', [
+            'label', 'track_name',
+        ]);
+        $metaModel->set('track_code', [
+            'label', 'track_code',
+        ]);
+        $metaModel->set('carePlan', [
+            'label', 'carePlan',
+        ]);
+        $metaModel->set('carePlanSuccess', [
+            'label', 'carePlanSuccess',
+        ]);
+        $metaModel->set('respondentTrackId', [
+            'label', 'respondentTrackId',
+        ]);
 
-        $this->set('gto_round_order', 'label', 'roundOrder', 'apiName', 'roundOrder');
+        $metaModel->set('gto_round_order', [
+            'label', 'roundOrder',
+            'apiName' => 'roundOrder',
+        ]);
 
-
-
-        // Add token URL
-    }
-
-    public function afterRegistry()
-    {
         $currentUri = $this->urlHelper->getBasePath();
 
-        $this->addTransformer(new QuestionnaireTaskStatusTransformer());
-        $this->addTransformer(new QuestionnaireTaskExecutionPeriodTransformer());
-        $this->addTransformer(new QuestionnaireOwnerTransformer());
-        $this->addTransformer(new QuestionnaireTaskForTransformer());
-        $this->addTransformer(new ManagingOrganizationTransformer('gto_id_organization', true));
-        $this->addTransformer(new QuestionnaireTaskInfoTransformer($this->db, $currentUri));
-        $this->addTransformer(new QuestionnaireReferenceTransformer('focus'));
+        $metaModel->addTransformer(new QuestionnaireTaskStatusTransformer());
+        $metaModel->addTransformer(new QuestionnaireTaskExecutionPeriodTransformer());
+        $metaModel->addTransformer(new QuestionnaireOwnerTransformer());
+        $metaModel->addTransformer(new QuestionnaireTaskForTransformer());
+        $metaModel->addTransformer(new ManagingOrganizationTransformer('gto_id_organization', true));
+        $metaModel->addTransformer(new QuestionnaireTaskInfoTransformer($this->resultFetcher, $currentUri));
+        $metaModel->addTransformer(new QuestionnaireReferenceTransformer('focus'));
     }
 }

@@ -4,16 +4,27 @@
 namespace Gems\Api\Fhir\Model;
 
 
-use Gems\Model\JoinModel;
+use Gems\Model\GemsJoinModel;
+use Gems\Model\MetaModelLoader;
+use Zalt\Base\TranslatorInterface;
+use Zalt\Model\Sql\SqlRunnerInterface;
 
-class ServiceTypeModel extends JoinModel
+class ServiceTypeModel extends GemsJoinModel
 {
-    public function __construct()
-    {
-        parent::__construct('serviceType', 'gems__agenda_activities', 'gaa', false);
-
-        $this->set('gaa_id_activity', 'label','code', 'apiName', 'code');
-        $this->set('gaa_name', 'label','display', 'apiName', 'display');
-
+    public function __construct(
+        MetaModelLoader $metaModelLoader,
+        SqlRunnerInterface $sqlRunner,
+        TranslatorInterface $translate,
+    ) {
+        parent::__construct('gems__agenda_activities', $metaModelLoader, $sqlRunner, $translate, 'serviceType');
+        $metaModel = $this->getMetaModel();
+        $metaModel->set('gaa_id_activity', [
+            'label' => 'code',
+            'apiName' => 'code',
+        ]);
+        $metaModel->set('gaa_name', [
+            'label' => 'display',
+            'apiName' => 'display',
+        ]);
     }
 }

@@ -8,36 +8,63 @@ use Gems\Api\Fhir\Model\Transformer\BooleanTransformer;
 use Gems\Api\Fhir\Model\Transformer\LocationAddressTransformer;
 use Gems\Api\Fhir\Model\Transformer\LocationStatusTransformer;
 use Gems\Api\Fhir\Model\Transformer\LocationTelecomTransformer;
-use Gems\Model\JoinModel;
+use Gems\Model\GemsJoinModel;
+use Gems\Model\MetaModelLoader;
+use Gems\Model\Type\BooleanType;
+use Laminas\Db\Sql\Expression;
+use Zalt\Base\TranslatorInterface;
+use Zalt\Model\Sql\SqlRunnerInterface;
 
-class LocationModel extends JoinModel
+class LocationModel extends GemsJoinModel
 {
-    public function __construct()
-    {
-        parent::__construct('location', 'gems__locations', 'glo', true);
+    public function __construct(
+        MetaModelLoader $metaModelLoader,
+        SqlRunnerInterface $sqlRunner,
+        TranslatorInterface $translate,
+    ) {
+        parent::__construct('gems__locations', $metaModelLoader, $sqlRunner, $translate, 'location');
+        $metaModel = $this->getMetaModel();
+        $this->addColumn(new Expression('\'Location\''), 'resourceType');
 
-        $this->addColumn(new \Zend_Db_Expr('\'Location\''), 'resourceType');
+        $metaModel->set('resourceType', [
+            'label' => 'resourceType',
+        ]);
 
-        $this->set('resourceType', 'label', 'resourceType');
+        $metaModel->set('glo_id_location', [
+            'label' => 'id',
+            'apiName' => 'id',
+        ]);
 
-        $this->set('glo_id_location', 'label', 'id', 'apiName', 'id');
+        $metaModel->set('glo_active', [
+            'label' => 'status',
+            'apiName' => 'status',
+            'type' => new BooleanType(),
+        ]);
+        $metaModel->set('glo_name', [
+            'label' => 'name',
+            'apiName' => 'name',
+        ]);
+        $metaModel->set('telecom', [
+            'label' => 'telecom'
+        ]);
 
-        $this->set('glo_active', 'label', 'status', 'apiName', 'status');
-        $this->set('glo_name', 'label', 'name', 'apiName', 'name');
-        $this->set('telecom', 'label', 'telecom');
-
-        $this->set('address', 'label', 'address');
+        $metaModel->set('address', [
+            'label' => 'address'
+        ]);
         // Search options
-        $this->set('address-city', 'label', 'address-city');
-        $this->set('address-country', 'label', 'address-country');
-        $this->set('address-postalcode', 'label', 'address-postalcode');
+        $metaModel->set('address-city', [
+            'label' => 'address-city',
+        ]);
+        $metaModel->set('address-country', [
+            'label' => 'address-country'
+        ]);
+        $metaModel->set('address-postalcode', [
+            'label' => 'address-postalcode',
+        ]);
 
-
-
-        $this->addTransformer(new LocationStatusTransformer());
-        $this->addTransformer(new LocationTelecomTransformer());
-        $this->addTransformer(new LocationAddressTransformer());
-        $this->addTransformer(new BooleanTransformer(['glo_active']));
-
+       $metaModel->addTransformer(new LocationStatusTransformer());
+       $metaModel->addTransformer(new LocationTelecomTransformer());
+       $metaModel->addTransformer(new LocationAddressTransformer());
+       $metaModel->addTransformer(new BooleanTransformer(['glo_active']));
     }
 }

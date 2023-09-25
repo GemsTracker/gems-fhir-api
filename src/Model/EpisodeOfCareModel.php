@@ -4,42 +4,63 @@ namespace Gems\Api\Fhir\Model;
 
 use Gems\Api\Fhir\Model\Transformer\EpisodeOfCarePeriodTransformer;
 use Gems\Api\Fhir\Model\Transformer\EpisodeOfCareStatusTransformer;
-use Gems\Api\Fhir\Model\Transformer\IntTransformer;
 use Gems\Api\Fhir\Model\Transformer\ManagingOrganizationTransformer;
 use Gems\Api\Fhir\Model\Transformer\PatientReferenceTransformer;
-use Gems\Model\JoinModel;
+use Gems\Model\GemsJoinModel;
+use Gems\Model\MetaModelLoader;
+use Laminas\Db\Sql\Expression;
 use MUtil\Model\Type\JsonData;
-use MUtil\Translate\Translator;
+use Zalt\Base\TranslatorInterface;
+use Zalt\Model\Sql\SqlRunnerInterface;
 
-class EpisodeOfCareModel extends JoinModel
+class EpisodeOfCareModel extends GemsJoinModel
 {
-    public function __construct(Translator $translator)
-    {
-        $this->translate = $translator;
-        parent::__construct('episodesofcare', 'gems__episodes_of_care', 'gec');
+    public function __construct(
+        MetaModelLoader $metaModelLoader,
+        SqlRunnerInterface $sqlRunner,
+        TranslatorInterface $translate,
+    ) {
+        parent::__construct('gems__episodes_of_care', $metaModelLoader, $sqlRunner, $translate, 'episodesOfCare');
+        $metaModel = $this->getMetaModel();
 
-        $this->addColumn(new \Zend_Db_Expr('\'EpisodeOfCare\''), 'resourceType');
+        $this->addColumn(new Expression('\'EpisodeOfCare\''), 'resourceType');
 
-        $this->set('resourceType', 'label', 'resourceType');
+        $metaModel->set('resourceType', [
+            'label' => 'resourceType',
+        ]);
 
-        $this->addTable('gems__respondent2org', ['gec_id_user' => 'gr2o_id_user', 'gec_id_organization', 'gr2o_id_organization'], 'gr2o', false);
-        $this->addTable('gems__organizations', ['gec_id_organization' => 'gor_id_organization'], 'gor', false);
+        $this->addTable('gems__respondent2org', ['gec_id_user' => 'gr2o_id_user', 'gec_id_organization' => 'gr2o_id_organization']);
+        $this->addTable('gems__organizations', ['gec_id_organization' => 'gor_id_organization']);
 
 
-        $this->set('gec_episode_of_care_id', 'label', 'id', 'apiName', 'id');
-        $this->set('gec_status', 'label', 'status', 'apiName', 'status');
-        $this->set('patient', 'label', 'patient', 'apiName', 'patient');
-        $this->set('period', 'label', 'period', 'apiName', 'period');
-        $this->set('managingOrganization', 'label', 'managingOrganization', 'apiName', 'managingOrganization');
+        $metaModel->set('gec_episode_of_care_id', [
+            'label' => 'id',
+            'apiName' => 'id',
+        ]);
+        $metaModel->set('gec_status', [
+            'label' => 'status',
+            'apiName' => 'status',
+        ]);
+        $metaModel->set('patient', [
+            'label' => 'patient',
+            'apiName' => 'patient',
+        ]);
+        $metaModel->set('period', [
+            'label' => 'period',
+            'apiName' => 'period',
+        ]);
+        $metaModel->set('managingOrganization', [
+            'label' => 'managingOrganization',
+            'apiName' => 'managingOrganization',
+        ]);
 
         $jsonType = new JsonData(10);
         $jsonType->apply($this, 'gec_diagnosis_data', false);
         $jsonType->apply($this, 'gec_extra_data',     false);
 
-        $this->addTransformer(new EpisodeOfCareStatusTransformer());
-        $this->addTransformer(new EpisodeOfCarePeriodTransformer());
-        $this->addTransformer(new PatientReferenceTransformer('patient'));
-        $this->addTransformer(new ManagingOrganizationTransformer('gec_id_organization', true));
-        $this->addTransformer(new IntTransformer(['gec_episode_of_care_id']));
+        $metaModel->addTransformer(new EpisodeOfCareStatusTransformer());
+        $metaModel->addTransformer(new EpisodeOfCarePeriodTransformer());
+        $metaModel->addTransformer(new PatientReferenceTransformer('patient'));
+        $metaModel->addTransformer(new ManagingOrganizationTransformer('gec_id_organization', true));
     }
 }

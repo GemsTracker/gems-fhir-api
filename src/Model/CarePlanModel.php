@@ -7,25 +7,30 @@ use Gems\Api\Fhir\Model\Transformer\CarePlanActityTransformer;
 use Gems\Api\Fhir\Model\Transformer\CarePlanContributorTransformer;
 use Gems\Api\Fhir\Model\Transformer\CarePlanInfoTransformer;
 use Gems\Api\Fhir\Model\Transformer\CarePlanPeriodTransformer;
-use Gems\Api\Fhir\Model\Transformer\IntTransformer;
 use Gems\Api\Fhir\Model\Transformer\PatientReferenceTransformer;
-use Gems\Model\JoinModel;
+use Gems\Model\GemsJoinModel;
+use Gems\Model\MetaModelLoader;
 use Gems\Tracker;
-use MUtil\Translate\Translator;
+use Laminas\Db\Sql\Expression;
+use Zalt\Base\TranslatorInterface;
+use Zalt\Model\Sql\SqlRunnerInterface;
 
-class CarePlanModel extends JoinModel
+class CarePlanModel extends GemsJoinModel
 {
-    public function __construct(protected Tracker $tracker, Translator $translator)
-    {
-        $this->translate = $translator;
-        parent::__construct('carePlan', 'gems__respondent2track', 'gr2t', true);
+    public function __construct(
+        MetaModelLoader $metaModelLoader,
+        SqlRunnerInterface $sqlRunner,
+        TranslatorInterface $translate,
+        protected readonly Tracker $tracker,
+    ) {
+        parent::__construct('gems__respondent2track', $metaModelLoader, $sqlRunner, $translate, 'carePlan');
+        $metaModel = $this->getMetaModel();
+
         $this->addTable(
             'gems__respondents',
             [
                 'gr2t_id_user' => 'grs_id_user',
             ],
-            'grs',
-            false
         );
         $this->addTable(
             'gems__respondent2org',
@@ -33,34 +38,26 @@ class CarePlanModel extends JoinModel
                 'gr2t_id_user' => 'gr2o_id_user',
                 'gr2t_id_organization' => 'gr2o_id_organization'
             ],
-            'gr2o',
-            false
         );
         $this->addTable('gems__tracks',
             [
                 'gr2t_id_track' => 'gtr_id_track',
             ],
-            'gtr',
-            false
         );
         $this->addTable('gems__organizations',
             [
                 'gr2t_id_organization' => 'gor_id_organization',
             ],
-            'gor',
-            false
         );
         $this->addTable('gems__reception_codes',
             [
                 'gr2t_reception_code' => 'grc_id_reception_code',
             ],
-            'grc',
-            false
         );
 
-        $this->addColumn(new \Zend_Db_Expr('\'CarePlan\''), 'resourceType');
-        $this->addColumn(new \Zend_Db_Expr('\'intent\''), 'order');
-        $this->addColumn(new \Zend_Db_Expr('
+        $this->addColumn(new Expression('\'CarePlan\''), 'resourceType');
+        $this->addColumn(new Expression('\'intent\''), 'order');
+        $this->addColumn(new Expression('
 CASE 
     WHEN grc_success = 1 THEN \'active\' 
     WHEN gr2t_reception_code = \'retract\' THEN \'revoked\' 
@@ -68,45 +65,70 @@ CASE
 END'), 'status');
 
 
-        $this->set('resourceType', ['label' => 'resourceType']);
-        $this->set('gr2t_id_respondent_track', ['label' => 'id', 'apiName' => 'id']);
-        $this->set('intent', ['label' => 'intent']);
-        $this->set('status', ['label' => 'status']);
-        $this->set('period', ['label' => 'period']);
-        $this->set('gtr_track_name', ['label' => 'title', 'apiName' => 'title']);
-        $this->set('gtr_code', ['label' => 'code', 'apiName' => 'code']);
-        $this->set('gr2t_created', ['label' => 'created', 'apiName' => 'created']);
-        $this->set('contributor', ['label' => 'contributor']);
-        $this->set('supportingInfo', ['label' => 'supportingInfo']);
-        $this->set('activity', ['label' => 'activity']);
+        $metaModel->set('resourceType', [
+            'label' => 'resourceType'
+        ]);
+        $metaModel->set('gr2t_id_respondent_track', [
+            'label' => 'id',
+            'apiName' => 'id',
+        ]);
+        $metaModel->set('intent', [
+            'label' => 'intent',
+        ]);
+        $metaModel->set('status', [
+            'label' => 'status',
+        ]);
+        $metaModel->set('period', [
+            'label' => 'period',
+        ]);
+        $metaModel->set('gtr_track_name', [
+            'label' => 'title',
+            'apiName' => 'title',
+        ]);
+        $metaModel->set('gtr_code', [
+            'label' => 'code',
+            'apiName' => 'code',
+        ]);
+        $metaModel->set('gr2t_created', [
+            'label' => 'created',
+            'apiName' => 'created',
+        ]);
+        $metaModel->set('contributor', [
+            'label' => 'contributor',
+        ]);
+        $metaModel->set('supportingInfo', [
+            'label' => 'supportingInfo',
+        ]);
+        $metaModel->set('activity', [
+            'label' => 'activity',
+        ]);
 
-        $this->set('gr2t_start_date', ['label' => 'start', 'apiName' => 'start']);
-        $this->set('gr2t_end_date', ['label' => 'end', 'apiName' => 'end']);
+        $metaModel->set('gr2t_start_date', [
+            'label' => 'start',
+            'apiName' => 'start',
+        ]);
+        $metaModel->set('gr2t_end_date', [
+            'label' => 'end',
+            'apiName' => 'end',
+        ]);
 
-        //$this->set('gtr_track_name', ['label' => 'trackName', 'apiName' => 'track_name']);
-        //$this->set('gtr_code', ['label' => 'trackCode', 'apiName' => 'track_code']);
-        $this->set('gtr_id_track', ['label' => 'trackId', 'apiName' => 'track_id']);
+        $metaModel->set('gtr_id_track', [
+            'label' => 'trackId',
+            'apiName' => 'track_id',
+        ]);
 
-        $this->set('patient', 'label', 'patient');
-        $this->set('patient.email', 'label', 'patient.email');
-    }
+        $metaModel->set('patient', [
+            'label' => 'patient'
+        ]);
+        $metaModel->set('patient.email', [
+            'label', 'patient.email'
+        ]);
 
-    public function afterRegistry()
-    {
+        $metaModel->addTransformer(new PatientReferenceTransformer('subject'));
+        $metaModel->addTransformer(new CarePlanContributorTransformer());
+        $metaModel->addTransformer(new CarePlanPeriodTransformer());
+        $metaModel->addTransformer(new CarePlanInfoTransformer());
 
-        parent::afterRegistry();
-        $this->addTransformers();
-    }
-
-    protected function addTransformers(): void
-    {
-        $this->addTransformer(new IntTransformer(['gr2t_id_respondent_track']));
-        $this->addTransformer(new PatientReferenceTransformer('subject'));
-        //$this->addTransformer(new CareplanAuthorTransformer());
-        $this->addTransformer(new CarePlanContributorTransformer());
-        $this->addTransformer(new CarePlanPeriodTransformer());
-        $this->addTransformer(new CarePlanInfoTransformer());
-
-        $this->addTransformer(new CarePlanActityTransformer($this->tracker));
+        $metaModel->addTransformer(new CarePlanActityTransformer($this->tracker));
     }
 }

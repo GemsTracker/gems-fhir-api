@@ -2,60 +2,107 @@
 
 namespace Gems\Api\Fhir\Model;
 
-use Gems\Api\Fhir\Model\Transformer\BooleanTransformer;
 use Gems\Api\Fhir\Model\Transformer\ManagingOrganizationTransformer;
 use Gems\Api\Fhir\Model\Transformer\PatientHumanNameTransformer;
 use Gems\Api\Fhir\Model\Transformer\PatientIdTransformer;
-use Gems\Api\Fhir\Model\Transformer\PatientManagingOrganizationTransformer;
 use Gems\Api\Fhir\Model\Transformer\PatientTelecomTransformer;
-use Gems\Model\RespondentModel;
+use Gems\Model\GemsJoinModel;
+use Gems\Model\MetaModelLoader;
+use Gems\Model\Type\BooleanType;
+use Laminas\Db\Sql\Expression;
+use Zalt\Base\TranslatorInterface;
+use Zalt\Model\Sql\SqlRunnerInterface;
 
-class PatientModel extends RespondentModel
+class PatientModel extends GemsJoinModel
 {
-    public function __construct()
-    {
-        parent::__construct();
+    public function __construct(
+        MetaModelLoader $metaModelLoader,
+        SqlRunnerInterface $sqlRunner,
+        TranslatorInterface $translate,
+    ) {
+        parent::__construct('gems__respondents', $metaModelLoader, $sqlRunner, $translate, 'respondents');
+
+        $metaModel = $this->getMetaModel();
+
+        $this->addTable('gems__respondent2org', ['grs_id_user' => 'gr2o_id_user']);
+        $this->addTable('gems__reception_codes', ['gr2o_reception_code' => 'grc_id_reception_code']);
 
         $this->addTable('gems__organizations', ['gr2o_id_organization' => 'gor_id_organization'], 'gor', false);
 
-        $this->addColumn(new \Zend_Db_Expr('CONCAT(gr2o_patient_nr, "@", gr2o_id_organization)'), 'id');
+        $this->addColumn(new Expression('CONCAT(gr2o_patient_nr, "@", gr2o_id_organization)'), 'id');
         //$this->addColumn('grc_success', 'active');
-        $this->addColumn(new \Zend_Db_Expr("CASE grs_gender WHEN 'M' THEN 'male' WHEN 'F' THEN 'female' ELSE 'unknown' END"), 'gender');
+        $this->addColumn(new Expression("CASE grs_gender WHEN 'M' THEN 'male' WHEN 'F' THEN 'female' ELSE 'unknown' END"), 'gender');
 
-        $this->addColumn(new \Zend_Db_Expr('\'Patient\''), 'resourceType');
+        $this->addColumn(new Expression('\'Patient\''), 'resourceType');
 
-        $this->set('resourceType', 'label', 'resourceType');
+        $metaModel->set('resourceType', [
+            'label' => 'resourceType',
+        ]);
 
-        $this->set('id', 'label', 'id');
-        $this->set('grc_success', 'label', 'active', 'apiName', 'active');
-        $this->set('gender', 'label', 'gender');
-        $this->set('grs_birthday', 'label', 'birthDate', 'apiName', 'birthDate');
+        $metaModel->set('id', [
+            'label' => 'id',
+        ]);
+        $metaModel->set('grc_success', [
+            'label' => 'active',
+            'apiName' => 'active',
+            'type' => new BooleanType(),
+        ]);
+        $metaModel->set('gender', [
+            'label' => 'gender',
+        ]);
+        $metaModel->set('grs_birthday', [
+            'label' => 'birthDate',
+            'apiName' => 'birthDate',
+        ]);
 
-        $this->set('name', 'label', 'name');
-        $this->set('gr2o_created', 'label', 'created', 'apiName', 'created');
-        $this->set('gr2o_changed', 'label', 'changed', 'apiName', 'changed');
+        $metaModel->set('name', [
+            'label' => 'name',
+        ]);
+        $metaModel->set('gr2o_created', [
+            'label' => 'created',
+            'apiName' => 'created',
+        ]);
+        $metaModel->set('gr2o_changed', [
+            'label' => 'changed',
+            'apiName' => 'changed',
+        ]);
 
         // search options
-        $this->set('family', 'label', 'name');
-        $this->set('given', 'label', 'name');
+        $metaModel->set('family', [
+            'label' => 'name',
+        ]);
+        $metaModel->set('given', [
+            'label' => 'name',
+        ]);
 
-
-
-        $this->set('telecom', 'label', 'telecom');
+        $metaModel->set('telecom', [
+            'label' => 'telecom',
+        ]);
         // search options
-        $this->set('email', 'label', 'email');
-        $this->set('phone', 'label', 'phone');
+        $metaModel->set('email', [
+            'label' => 'email',
+        ]);
+        $metaModel->set('phone', [
+            'label' => 'phone',
+        ]);
 
-        $this->set('managingOrganization', 'label', 'managingOrganization');
+        $metaModel->set('managingOrganization', [
+            'label' => 'managingOrganization',
+        ]);
         // search options
-        $this->set('organization', 'label', 'organization');
-        $this->set('organization_name', 'label', 'organization_name');
-        $this->set('organization_code', 'label', 'organization_code');
+        $metaModel->set('organization', [
+            'label' => 'organization',
+        ]);
+        $metaModel->set('organization_name', [
+            'label' => 'organization_name',
+        ]);
+        $metaModel->set('organization_code', [
+            'label' => 'organization_code',
+        ]);
 
-        $this->addTransformer(new PatientIdTransformer());
-        $this->addTransformer(new PatientHumanNameTransformer());
-        $this->addTransformer(new PatientTelecomTransformer());
-        $this->addTransformer(new ManagingOrganizationTransformer('gr2o_id_organization', true));
-        $this->addTransformer(new BooleanTransformer(['grc_success']));
+        $metaModel->addTransformer(new PatientIdTransformer());
+        $metaModel->addTransformer(new PatientHumanNameTransformer());
+        $metaModel->addTransformer(new PatientTelecomTransformer());
+        $metaModel->addTransformer(new ManagingOrganizationTransformer('gr2o_id_organization', true));
     }
 }

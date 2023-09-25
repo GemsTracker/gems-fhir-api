@@ -3,6 +3,7 @@
 namespace Gems\Api\Fhir\Model\Transformer;
 
 use Gems\Api\Fhir\Endpoints;
+use Gems\Db\ResultFetcher;
 use Zalt\Model\MetaModelInterface;
 use Zalt\Model\Transform\ModelTransformerAbstract;
 
@@ -14,18 +15,14 @@ class QuestionnaireTaskInfoTransformer extends ModelTransformerAbstract
     protected string $currentUri;
 
     /**
-     * @var \Zend_Db_Adapter_Abstract
-     */
-    protected \Zend_Db_Adapter_Abstract $db;
-
-    /**
      * @var int[]|null
      */
     protected ?array $respondentTrackReceptionCodes = null;
 
-    public function __construct(\Zend_Db_Adapter_Abstract $db, ?string $currentUri = null)
+    public function __construct(
+        protected readonly ResultFetcher $resultFetcher,
+        string|null $currentUri = null)
     {
-        $this->db = $db;
         $this->currentUri = $currentUri ?? '/';
     }
 
@@ -35,12 +32,14 @@ class QuestionnaireTaskInfoTransformer extends ModelTransformerAbstract
     protected function getRespondentTrackReceptionCodes(): array
     {
         if (!$this->respondentTrackReceptionCodes) {
-            $select = $this->db->select();
-            $select->from('gems__reception_codes', ['grc_id_reception_code', 'grc_success'])
-                ->where('grc_for_tracks = 1')
-                ->where('grc_active = 1');
+            $select = $this->resultFetcher->getSelect('gems__reception_codes');
+            $select->columns(['grc_id_reception_code', 'grc_success'])
+                ->where([
+                    'grc_for_tracks' => 1,
+                    'grc_active' => 1,
+                ]);
 
-            $this->respondentTrackReceptionCodes = $this->db->fetchPairs($select);
+            $this->respondentTrackReceptionCodes = $this->resultFetcher->fetchPairs($select);
         }
 
         return $this->respondentTrackReceptionCodes;

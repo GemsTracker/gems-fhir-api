@@ -8,26 +8,31 @@ use Gems\Agenda\Agenda;
 use Gems\Api\Fhir\Model\Transformer\AppointmentParticipantTransformer;
 use Gems\Api\Fhir\Model\Transformer\AppointmentServiceTypeTransformer;
 use Gems\Api\Fhir\Model\Transformer\AppointmentStatusTransformer;
-use Gems\Api\Fhir\Model\Transformer\IntTransformer;
-use Gems\Model\JoinModel;
-use MUtil\Translate\Translator;
+use Gems\Model\GemsJoinModel;
+use Gems\Model\MetaModelLoader;
+use Laminas\Db\Sql\Expression;
+use Zalt\Base\TranslatorInterface;
+use Zalt\Model\Sql\SqlRunnerInterface;
 
-class AppointmentModel extends JoinModel
+class AppointmentModel extends GemsJoinModel
 {
-    public function __construct(protected Agenda $agenda, Translator $translator)
-    {
-        $this->translate = $translator;
-        parent::__construct('appointments', 'gems__appointments', 'gap');
+    public function __construct(
+        MetaModelLoader $metaModelLoader,
+        SqlRunnerInterface $sqlRunner,
+        TranslatorInterface $translate,
+        protected readonly Agenda $agenda,
+    ) {
+        parent::__construct('gems__appointments', $metaModelLoader, $sqlRunner, $translate, 'appointments');
+
+        $metaModel = $this->getMetaModel();
 
         $this->addTable(
             'gems__respondent2org',
-            array('gap_id_user' => 'gr2o_id_user', 'gap_id_organization' => 'gr2o_id_organization'),
-            'gr2o',
-            false
+            ['gap_id_user' => 'gr2o_id_user', 'gap_id_organization' => 'gr2o_id_organization'],
         );
 
-        $this->addColumn(new \Zend_Db_Expr("'appointment'"), \Gems\Model::ID_TYPE);
-        $this->setKeys(array(\Gems\Model::APPOINTMENT_ID => 'gap_id_appointment'));
+        $this->addColumn(new Expression('\'appointment\''), \Gems\Model::ID_TYPE);
+        $metaModel->setKeys([\Gems\Model::APPOINTMENT_ID => 'gap_id_appointment']);
 
         $codes = $this->agenda->getStatusCodesInactive();
         if (isset($codes['CA'])) {
@@ -39,106 +44,105 @@ class AppointmentModel extends JoinModel
             $cancelCode = null;
         }
         if ($cancelCode) {
-            $this->setDeleteValues('gap_status', $cancelCode);
+            $metaModel->setDeleteValues('gap_status', $cancelCode);
         }
 
 
 
-        $this->addTable('gems__respondents', ['grs_id_user' =>  'gap_id_user'], 'grs');
-        $this->addTable('gems__organizations', ['gap_id_organization' => 'gor_id_organization'],'gor');
-        $this->addLeftTable('gems__agenda_activities', ['gap_id_activity' =>  'gaa_id_activity'], 'gaa');
-        $this->addLeftTable('gems__agenda_staff', ['gap_id_attended_by' =>  'gas_id_staff'], 'gas');
-        $this->addLeftTable('gems__locations', ['gap_id_location' =>  'glo_id_location'], 'glo');
+        $this->addTable('gems__respondents', ['grs_id_user' =>  'gap_id_user']);
+        $this->addTable('gems__organizations', ['gap_id_organization' => 'gor_id_organization']);
+        $this->addLeftTable('gems__agenda_activities', ['gap_id_activity' =>  'gaa_id_activity']);
+        $this->addLeftTable('gems__agenda_staff', ['gap_id_attended_by' =>  'gas_id_staff']);
+        $this->addLeftTable('gems__locations', ['gap_id_location' =>  'glo_id_location']);
 
         $this->addColumn('gap_admission_time', 'admission_date');
-        $this->addColumn(new \Zend_Db_Expr('\'Appointment\''), 'resourceType');
+        $this->addColumn(new Expression('\'Appointment\''), 'resourceType');
 
-        $this->set('resourceType', [
+        $metaModel->set('resourceType', [
             'label' => 'resourceType',
         ]);
 
-        $this->set('gap_id_appointment', [
+        $metaModel->set('gap_id_appointment', [
             'label' => 'id',
             'apiName' => 'id'
         ]);
-        $this->set('gap_status', [
+        $metaModel->set('gap_status', [
             'label' => 'active',
             'apiName', 'status',
         ]);
-        $this->set('gap_admission_time', [
+        $metaModel->set('gap_admission_time', [
             'label' => 'start',
             'apiName', 'start',
         ]);
         // Search options
-        $this->set('admission_date', [
+        $metaModel->set('admission_date', [
             'label' => 'date',
             'apiName', 'date',
         ]);
 
-        $this->set('gap_discharge_time', [
+        $metaModel->set('gap_discharge_time', [
             'label' => 'end',
             'apiName', 'end',
         ]);
-        $this->set('gap_created', [
+        $metaModel->set('gap_created', [
             'label' => 'created',
             'apiName', 'created',
         ]);
-        $this->set('gap_subject', [
+        $metaModel->set('gap_subject', [
             'label' => 'comment',
             'apiName', 'comment',
         ]);
-        $this->set('gap_comment', [
+        $metaModel->set('gap_comment', [
             'label' => 'description',
             'apiName', 'description',
         ]);
 
-        $this->set('serviceType', [
+        $metaModel->set('serviceType', [
             'label' => 'serviceType'
         ]);
 
-        $this->set('gap_created', [
+        $metaModel->set('gap_created', [
             'label' => 'created',
             'apiName', 'created',
         ]);
-        $this->set('gap_changed', [
+        $metaModel->set('gap_changed', [
             'label' => 'changed',
             'apiName', 'changed',
         ]);
 
         // Search options
-        $this->set('service-type', [
+        $metaModel->set('service-type', [
             'label' => 'service-type',
         ]);
-        $this->set('service-type.display', [
+        $metaModel->set('service-type.display', [
             'label' => 'service-type.display',
         ]);
 
-        $this->set('participant', [
+        $metaModel->set('participant', [
             'label' => 'participant',
         ]);
         // Search options
-        $this->set('patient', [
+        $metaModel->set('patient', [
             'label' => 'patient',
         ]);
-        $this->set('patient.email', [
+        $metaModel->set('patient.email', [
             'label' => 'patient.email',
         ]);
-        $this->set('practitioner', [
+        $metaModel->set('practitioner', [
             'label' => 'practitioner',
         ]);
-        $this->set('practitioner.name', [
+        $metaModel->set('practitioner.name', [
             'label' => 'practitioner.name',
         ]);
-        $this->set('location', [
+        $metaModel->set('location', [
             'label' => 'location',
         ]);
-        $this->set('location.name', [
+        $metaModel->set('location.name', [
             'label' => 'location.name',
         ]);
 
-        $this->addTransformer(new AppointmentStatusTransformer());
-        $this->addTransformer(new AppointmentServiceTypeTransformer());
-        $this->addTransformer(new AppointmentParticipantTransformer());
-        $this->addTransformer(new IntTransformer(['gap_id_appointment']));
+        $metaModel->addTransformer(new AppointmentStatusTransformer());
+        $metaModel->addTransformer(new AppointmentServiceTypeTransformer());
+        $metaModel->addTransformer(new AppointmentParticipantTransformer());
     }
 }
