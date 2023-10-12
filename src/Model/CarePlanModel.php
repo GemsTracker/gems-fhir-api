@@ -121,7 +121,7 @@ END'), 'status');
             'label' => 'patient'
         ]);
         $metaModel->set('patient.email', [
-            'label', 'patient.email'
+            'label' => 'patient.email'
         ]);
 
         $metaModel->addTransformer(new PatientReferenceTransformer('subject'));
