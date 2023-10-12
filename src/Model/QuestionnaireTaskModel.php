@@ -48,109 +48,109 @@ class QuestionnaireTaskModel extends GemsJoinModel
         $this->addColumn(new Expression('\'order\''), 'intent');
 
         $metaModel->set('resourceType', [
-            'label', 'resourceType',
+            'label' => 'resourceType',
         ]);
         $metaModel->set('gto_id_token', [
-            'label', 'id',
+            'label' => 'id',
             'apiName' => 'id',
         ]);
         $metaModel->set('status', [
-            'label', 'status',
+            'label' => 'status',
             'apiName' => 'status',
         ]);
         $metaModel->set('gto_completion_time', [
-            'label', 'completedAt',
+            'label' => 'completedAt',
             'apiName' => 'completedAt',
         ]);
         $metaModel->set('priority', [
-            'label', 'priority',
+            'label' => 'priority',
         ]);
         $metaModel->set('intent', [
-            'label', 'intent',
+            'label' => 'intent',
         ]);
         $metaModel->set('owner', [
-            'label', 'owner',
+            'label' => 'owner',
         ]);
         $metaModel->set('gto_created', [
-            'label', 'authoredOn',
+            'label' => 'authoredOn',
             'apiName' => 'authoredOn',
         ]);
         $metaModel->set('gto_changed', [
-            'label', 'lastModified',
+            'label' => 'lastModified',
             'apiName' => 'lastModified',
         ]);
         $metaModel->set('executionPeriod', [
-            'label', 'executionPeriod',
+            'label' => 'executionPeriod',
         ]);
 
         $metaModel->set('managingOrganization', [
-            'label', 'managingOrganization',
+            'label' => 'managingOrganization',
         ]);
         $metaModel->set('info', [
-            'label', 'info',
+            'label' => 'info',
         ]);
 
         $metaModel->set('patient', [
-            'label', 'patient',
+            'label' => 'patient',
         ]);
         $metaModel->set('for', [
-            'label', 'for',
+            'label' => 'for',
         ]);
         $metaModel->set('owner.name', [
-            'label', 'owner.name',
+            'label' => 'owner.name',
         ]);
         $metaModel->set('owner_name', [
-            'label', 'owner_name',
+            'label' => 'owner_name',
         ]);
         $metaModel->set('owner.type', [
-            'label', 'owner.type',
+            'label' => 'owner.type',
         ]);
         $metaModel->set('owner_type', [
-            'label', 'owner_type',
+            'label' => 'owner_type',
         ]);
         $metaModel->set('survey', [
-            'label', 'survey',
+            'label' => 'survey',
         ]);
         $metaModel->set('survey_name', [
-            'label', 'survey_name',
+            'label' => 'survey_name',
         ]);
         $metaModel->set('survey_code', [
-            'label', 'survey_code',
+            'label' => 'survey_code',
         ]);
         $metaModel->set('questionnaire', [
-            'label', 'questionnaire',
+            'label' => 'questionnaire',
         ]);
         $metaModel->set('questionnaire_name', [
-            'label', 'questionnaire_name',
+            'label' => 'questionnaire_name',
         ]);
         $metaModel->set('questionnaire_code', [
-            'label', 'questionnaire_code',
+            'label' => 'questionnaire_code',
         ]);
 
         $metaModel->set('roundDescription', [
-            'label', 'roundDescription',
+            'label' => 'roundDescription',
         ]);
         $metaModel->set('track', [
-            'label', 'track',
+            'label' => 'track',
         ]);
         $metaModel->set('track_name', [
-            'label', 'track_name',
+            'label' => 'track_name',
         ]);
         $metaModel->set('track_code', [
-            'label', 'track_code',
+            'label' => 'track_code',
         ]);
         $metaModel->set('carePlan', [
-            'label', 'carePlan',
+            'label' => 'carePlan',
         ]);
         $metaModel->set('carePlanSuccess', [
-            'label', 'carePlanSuccess',
+            'label' => 'carePlanSuccess',
         ]);
         $metaModel->set('respondentTrackId', [
-            'label', 'respondentTrackId',
+            'label' => 'respondentTrackId',
         ]);
 
         $metaModel->set('gto_round_order', [
-            'label', 'roundOrder',
+            'label' => 'roundOrder',
             'apiName' => 'roundOrder',
         ]);
 
