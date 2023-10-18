@@ -10,6 +10,7 @@ use Gems\Api\Fhir\Model\Transformer\AppointmentServiceTypeTransformer;
 use Gems\Api\Fhir\Model\Transformer\AppointmentStatusTransformer;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
+use Gems\User\Mask\MaskRepository;
 use Laminas\Db\Sql\Expression;
 use Zalt\Base\TranslatorInterface;
 use Zalt\Model\Sql\SqlRunnerInterface;
@@ -21,6 +22,7 @@ class AppointmentModel extends GemsJoinModel
         SqlRunnerInterface $sqlRunner,
         TranslatorInterface $translate,
         protected readonly Agenda $agenda,
+        MaskRepository $maskRepository,
     ) {
         parent::__construct('gems__appointments', $metaModelLoader, $sqlRunner, $translate, 'appointments');
 
@@ -144,5 +146,7 @@ class AppointmentModel extends GemsJoinModel
         $metaModel->addTransformer(new AppointmentStatusTransformer());
         $metaModel->addTransformer(new AppointmentServiceTypeTransformer());
         $metaModel->addTransformer(new AppointmentParticipantTransformer());
+
+        $maskRepository->applyMaskToDataModel($metaModel);
     }
 }

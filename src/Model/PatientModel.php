@@ -9,6 +9,7 @@ use Gems\Api\Fhir\Model\Transformer\PatientTelecomTransformer;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
 use Gems\Model\Type\BooleanType;
+use Gems\User\Mask\MaskRepository;
 use Laminas\Db\Sql\Expression;
 use Zalt\Base\TranslatorInterface;
 use Zalt\Model\Sql\SqlRunnerInterface;
@@ -19,6 +20,7 @@ class PatientModel extends GemsJoinModel
         MetaModelLoader $metaModelLoader,
         SqlRunnerInterface $sqlRunner,
         TranslatorInterface $translate,
+        MaskRepository $maskRepository,
     ) {
         parent::__construct('gems__respondents', $metaModelLoader, $sqlRunner, $translate, 'respondents');
 
@@ -104,5 +106,7 @@ class PatientModel extends GemsJoinModel
         $metaModel->addTransformer(new PatientHumanNameTransformer());
         $metaModel->addTransformer(new PatientTelecomTransformer());
         $metaModel->addTransformer(new ManagingOrganizationTransformer('gr2o_id_organization', true));
+
+        $maskRepository->applyMaskToDataModel($metaModel);
     }
 }

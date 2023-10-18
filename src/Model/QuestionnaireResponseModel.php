@@ -12,6 +12,7 @@ use Gems\Locale\Locale;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
 use Gems\Tracker;
+use Gems\User\Mask\MaskRepository;
 use Laminas\Db\Sql\Expression;
 use Zalt\Base\TranslatorInterface;
 use Zalt\Model\Sql\SqlRunnerInterface;
@@ -24,6 +25,7 @@ class QuestionnaireResponseModel extends GemsJoinModel
         TranslatorInterface $translate,
         protected readonly Tracker $tracker,
         protected readonly Locale $locale,
+        MaskRepository $maskRepository,
     ) {
         parent::__construct('gems__tokens', $metaModelLoader, $sqlRunner, $translate, 'questionnaireResponse');
 
@@ -76,5 +78,7 @@ class QuestionnaireResponseModel extends GemsJoinModel
         $metaModel->addFilter(['gto_completion_time IS NOT NULL']);
 
         $metaModel->addTransformer(new QuestionnaireResponseItemsTransformer($this->tracker, $this->locale->getLanguage()));
+
+        $maskRepository->applyMaskToDataModel($metaModel);
     }
 }

@@ -11,6 +11,7 @@ use Gems\Api\Fhir\Model\Transformer\PatientReferenceTransformer;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
 use Gems\Tracker;
+use Gems\User\Mask\MaskRepository;
 use Laminas\Db\Sql\Expression;
 use Zalt\Base\TranslatorInterface;
 use Zalt\Model\Sql\SqlRunnerInterface;
@@ -22,6 +23,7 @@ class CarePlanModel extends GemsJoinModel
         SqlRunnerInterface $sqlRunner,
         TranslatorInterface $translate,
         protected readonly Tracker $tracker,
+        MaskRepository $maskRepository,
     ) {
         parent::__construct('gems__respondent2track', $metaModelLoader, $sqlRunner, $translate, 'carePlan');
         $metaModel = $this->getMetaModel();
@@ -130,5 +132,7 @@ END'), 'status');
         $metaModel->addTransformer(new CarePlanInfoTransformer());
 
         $metaModel->addTransformer(new CarePlanActityTransformer($this->tracker));
+
+        $maskRepository->applyMaskToDataModel($metaModel);
     }
 }

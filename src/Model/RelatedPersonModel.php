@@ -9,6 +9,7 @@ use Gems\Api\Fhir\Model\Transformer\RelatedPersonTelecomTransformer;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
 use Gems\Model\Type\BooleanType;
+use Gems\User\Mask\MaskRepository;
 use Laminas\Db\Sql\Expression;
 use Zalt\Base\TranslatorInterface;
 use Zalt\Model\Sql\SqlRunnerInterface;
@@ -19,6 +20,7 @@ class RelatedPersonModel extends GemsJoinModel
         MetaModelLoader $metaModelLoader,
         SqlRunnerInterface $sqlRunner,
         TranslatorInterface $translate,
+        MaskRepository $maskRepository,
     ) {
         parent::__construct('gems__respondent_relations', $metaModelLoader, $sqlRunner, $translate, 'relatedPerson');
         $metaModel = $this->getMetaModel();
@@ -83,5 +85,7 @@ class RelatedPersonModel extends GemsJoinModel
         $metaModel->addTransformer(new PatientReferenceTransformer('patient'));
         $metaModel->addTransformer(new RelatedPersonHumanNameTransformer());
         $metaModel->addTransformer(new RelatedPersonTelecomTransformer());
+
+        $maskRepository->applyMaskToDataModel($metaModel);
     }
 }

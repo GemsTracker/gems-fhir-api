@@ -13,6 +13,7 @@ use Gems\Api\Fhir\Model\Transformer\QuestionnaireTaskStatusTransformer;
 use Gems\Db\ResultFetcher;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
+use Gems\User\Mask\MaskRepository;
 use Laminas\Db\Sql\Expression;
 use Mezzio\Helper\UrlHelper;
 use Zalt\Base\TranslatorInterface;
@@ -27,6 +28,7 @@ class QuestionnaireTaskModel extends GemsJoinModel
         TranslatorInterface $translate,
         protected readonly ResultFetcher $resultFetcher,
         protected readonly UrlHelper $urlHelper,
+        MaskRepository $maskRepository,
     ) {
         parent::__construct('gems__tokens', $metaModelLoader, $sqlRunner, $translate, 'questionaireTasks');
         $metaModel = $this->getMetaModel();
@@ -163,5 +165,7 @@ class QuestionnaireTaskModel extends GemsJoinModel
         $metaModel->addTransformer(new ManagingOrganizationTransformer('gto_id_organization', true));
         $metaModel->addTransformer(new QuestionnaireTaskInfoTransformer($this->resultFetcher, $currentUri));
         $metaModel->addTransformer(new QuestionnaireReferenceTransformer('focus'));
+
+        $maskRepository->applyMaskToDataModel($metaModel);
     }
 }

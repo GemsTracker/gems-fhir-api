@@ -8,6 +8,7 @@ use Gems\Api\Fhir\Model\Transformer\ManagingOrganizationTransformer;
 use Gems\Api\Fhir\Model\Transformer\PatientReferenceTransformer;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
+use Gems\User\Mask\MaskRepository;
 use Laminas\Db\Sql\Expression;
 use MUtil\Model\Type\JsonData;
 use Zalt\Base\TranslatorInterface;
@@ -19,6 +20,7 @@ class EpisodeOfCareModel extends GemsJoinModel
         MetaModelLoader $metaModelLoader,
         SqlRunnerInterface $sqlRunner,
         TranslatorInterface $translate,
+        MaskRepository $maskRepository,
     ) {
         parent::__construct('gems__episodes_of_care', $metaModelLoader, $sqlRunner, $translate, 'episodesOfCare');
         $metaModel = $this->getMetaModel();
@@ -54,13 +56,19 @@ class EpisodeOfCareModel extends GemsJoinModel
             'apiName' => 'managingOrganization',
         ]);
 
-        $jsonType = new JsonData(10);
+        /*$metaModel->set('gec_extra_data', [
+           'type' => $me
+        ]);*/
+
+        /*$jsonType = new JsonData(10);
         $jsonType->apply($this, 'gec_diagnosis_data', false);
-        $jsonType->apply($this, 'gec_extra_data',     false);
+        $jsonType->apply($this, 'gec_extra_data',     false);*/
 
         $metaModel->addTransformer(new EpisodeOfCareStatusTransformer());
         $metaModel->addTransformer(new EpisodeOfCarePeriodTransformer());
         $metaModel->addTransformer(new PatientReferenceTransformer('patient'));
         $metaModel->addTransformer(new ManagingOrganizationTransformer('gec_id_organization', true));
+
+        $maskRepository->applyMaskToDataModel($metaModel);
     }
 }
