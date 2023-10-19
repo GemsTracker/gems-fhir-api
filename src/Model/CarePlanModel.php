@@ -10,6 +10,7 @@ use Gems\Api\Fhir\Model\Transformer\CarePlanPeriodTransformer;
 use Gems\Api\Fhir\Model\Transformer\PatientReferenceTransformer;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
+use Gems\Model\Transform\MaskTransformer;
 use Gems\Tracker;
 use Gems\User\Mask\MaskRepository;
 use Laminas\Db\Sql\Expression;
@@ -65,6 +66,8 @@ CASE
     WHEN gr2t_reception_code = \'retract\' THEN \'revoked\' 
     ELSE \'unknown\' 
 END'), 'status');
+
+        $metaModel->addTransformer(new MaskTransformer($maskRepository));
 
 
         $metaModel->set('resourceType', [

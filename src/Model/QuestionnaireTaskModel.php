@@ -13,6 +13,7 @@ use Gems\Api\Fhir\Model\Transformer\QuestionnaireTaskStatusTransformer;
 use Gems\Db\ResultFetcher;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
+use Gems\Model\Transform\MaskTransformer;
 use Gems\User\Mask\MaskRepository;
 use Laminas\Db\Sql\Expression;
 use Mezzio\Helper\UrlHelper;
@@ -48,6 +49,8 @@ class QuestionnaireTaskModel extends GemsJoinModel
         $this->addColumn(new Expression('\'QuestionnaireTask\''), 'resourceType');
         $this->addColumn(new Expression('\'routine\''), 'priority');
         $this->addColumn(new Expression('\'order\''), 'intent');
+
+        $metaModel->addTransformer(new MaskTransformer($maskRepository));
 
         $metaModel->set('resourceType', [
             'label' => 'resourceType',

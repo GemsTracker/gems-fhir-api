@@ -10,6 +10,7 @@ use Gems\Api\Fhir\Model\Transformer\AppointmentServiceTypeTransformer;
 use Gems\Api\Fhir\Model\Transformer\AppointmentStatusTransformer;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
+use Gems\Model\Transform\MaskTransformer;
 use Gems\User\Mask\MaskRepository;
 use Laminas\Db\Sql\Expression;
 use Zalt\Base\TranslatorInterface;
@@ -46,10 +47,8 @@ class AppointmentModel extends GemsJoinModel
             $cancelCode = null;
         }
         if ($cancelCode) {
-            $metaModel->setDeleteValues('gap_status', $cancelCode);
+            //$metaModel->setDeleteValues('gap_status', $cancelCode);
         }
-
-
 
         $this->addTable('gems__respondents', ['grs_id_user' =>  'gap_id_user']);
         $this->addTable('gems__organizations', ['gap_id_organization' => 'gor_id_organization']);
@@ -59,6 +58,8 @@ class AppointmentModel extends GemsJoinModel
 
         $this->addColumn('gap_admission_time', 'admission_date');
         $this->addColumn(new Expression('\'Appointment\''), 'resourceType');
+
+        $metaModel->addTransformer(new MaskTransformer($maskRepository));
 
         $metaModel->set('resourceType', [
             'label' => 'resourceType',
@@ -70,33 +71,33 @@ class AppointmentModel extends GemsJoinModel
         ]);
         $metaModel->set('gap_status', [
             'label' => 'active',
-            'apiName', 'status',
+            'apiName' => 'status',
         ]);
         $metaModel->set('gap_admission_time', [
             'label' => 'start',
-            'apiName', 'start',
+            'apiName' => 'start',
         ]);
         // Search options
         $metaModel->set('admission_date', [
             'label' => 'date',
-            'apiName', 'date',
+            'apiName' => 'date',
         ]);
 
         $metaModel->set('gap_discharge_time', [
             'label' => 'end',
-            'apiName', 'end',
+            'apiName' => 'end',
         ]);
         $metaModel->set('gap_created', [
             'label' => 'created',
-            'apiName', 'created',
+            'apiName' => 'created',
         ]);
         $metaModel->set('gap_subject', [
             'label' => 'comment',
-            'apiName', 'comment',
+            'apiName' => 'comment',
         ]);
         $metaModel->set('gap_comment', [
             'label' => 'description',
-            'apiName', 'description',
+            'apiName' => 'description',
         ]);
 
         $metaModel->set('serviceType', [
@@ -105,11 +106,11 @@ class AppointmentModel extends GemsJoinModel
 
         $metaModel->set('gap_created', [
             'label' => 'created',
-            'apiName', 'created',
+            'apiName' => 'created',
         ]);
         $metaModel->set('gap_changed', [
             'label' => 'changed',
-            'apiName', 'changed',
+            'apiName' => 'changed',
         ]);
 
         // Search options
