@@ -8,6 +8,7 @@ use Gems\Api\Fhir\Model\Transformer\PractitionerTelecomTransformer;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
 use Gems\Model\Type\BooleanType;
+use Laminas\Db\Sql\Expression;
 use Zalt\Base\TranslatorInterface;
 use Zalt\Model\Sql\SqlRunnerInterface;
 
@@ -22,15 +23,15 @@ class PractitionerModel extends GemsJoinModel
 
         $metaModel = $this->getMetaModel();
 
-        $this->addLeftTable('gems__staff', ['gas_id_user' => 'gsf_id_user'], 'gsf', true);
+        $this->addLeftTable('gems__staff', ['gas_id_user' => 'gsf_id_user']);
 
-        $this->addColumn(new \Zend_Db_Expr('\'Practitioner\''), 'resourceType');
+        $this->addColumn(new Expression('\'Practitioner\''), 'resourceType');
 
         $metaModel->set('resourceType', [
             'label' => 'resourceType',
         ]);
 
-        $this->addColumn(new \Zend_Db_Expr("CASE gsf_gender WHEN 'M' THEN 'male' WHEN 'F' THEN 'female' ELSE 'unknown' END"), 'gender');
+        $this->addColumn(new Expression("CASE gsf_gender WHEN 'M' THEN 'male' WHEN 'F' THEN 'female' ELSE 'unknown' END"), 'gender');
 
         $metaModel->set('gas_id_staff', [
             'label' => 'id',
