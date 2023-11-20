@@ -9,11 +9,13 @@ class ConsentDecisionTransformer extends ModelTransformerAbstract
 {
     public function transformFilter(MetaModelInterface $model, array $filter)
     {
-        if (isset($filter['decision']) && in_array($filter['decision'], ['permit', 'deny'])) {
-            $filter['gco_description'] = match($filter['decision']) {
-                'permit' => 'Yes',
-                'deny' => 'No',
-            };
+        if (isset($filter['decision'])) {
+            if ($filter['decision'] === 'permit') {
+                $filter['gco_description'] = 'Yes';
+            }
+            if ($filter['decision'] === 'deny') {
+                $filter['gco_description'] = 'No';
+            }
             unset($filter['decision']);
         }
         return $filter;
