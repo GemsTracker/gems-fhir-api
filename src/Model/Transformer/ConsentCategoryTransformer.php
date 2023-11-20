@@ -7,7 +7,7 @@ use Zalt\Model\Transform\ModelTransformerAbstract;
 
 class ConsentCategoryTransformer extends ModelTransformerAbstract
 {
-    public function transformLoad(MetaModelInterface $model, array $data, $new = false, $isPostData = false)
+    public function transformLoad(MetaModelInterface $model, array $data, $new = false, $isPostData = false): array
     {
         foreach ($data as $key=>$row) {
             $data[$key]['category'][] = [

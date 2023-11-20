@@ -4,6 +4,8 @@ namespace Gems\Api\Fhir\Model;
 
 use Gems\Api\Fhir\Model\Transformer\ConsentCategoryTransformer;
 use Gems\Api\Fhir\Model\Transformer\ConsentControllerTransformer;
+use Gems\Api\Fhir\Model\Transformer\ConsentDecisionTransformer;
+use Gems\Api\Fhir\Model\Transformer\ConsentStatusTransformer;
 use Gems\Api\Fhir\Model\Transformer\PatientReferenceTransformer;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
@@ -28,11 +30,17 @@ class ConsentModel extends GemsJoinModel
 
         $this->addColumn(new Expression('CONCAT(gr2o_patient_nr, "@", gr2o_id_organization)'), 'id');
         $this->addColumn(new Expression('\'Consent\''), 'resourceType');
-        $this->addColumn(new Expression('\'active\''), 'status');
+        $this->addColumn(new Expression("CASE gco_description 
+            WHEN 'Unknown' THEN 'unknown'
+            ELSE 'active' END"), 'status');
 
-        $this->addColumn(new Expression("CASE gco_code WHEN 'consent given' THEN 'permit' ELSE 'deny' END"), 'decision');
+        $this->addColumn(new Expression("CASE gco_description 
+            WHEN 'Yes' THEN 'permit'
+            WHEN 'No' THEN 'deny'
+            ELSE null END"), 'decision');
 
         $this->metaModel->addTransformer(new PatientReferenceTransformer('subject'));
+        $this->metaModel->addTransformer(new ConsentDecisionTransformer());
         $this->metaModel->addTransformer(new ConsentControllerTransformer());
         $this->metaModel->addTransformer(new ConsentCategoryTransformer());
 
@@ -49,8 +57,6 @@ class ConsentModel extends GemsJoinModel
         $this->metaModel->set('category', [
             'label' => 'category',
         ]);
-
-
 
         $maskRepository->applyMaskToDataModel($this->metaModel);
     }
