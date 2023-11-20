@@ -4,6 +4,7 @@ namespace Gems\Api\Fhir\Model;
 
 
 use Gems\Api\Fhir\Model\Transformer\ManagingOrganizationTransformer;
+use Gems\Api\Fhir\Model\Transformer\PatientReferenceTransformer;
 use Gems\Api\Fhir\Model\Transformer\QuestionnaireTaskExecutionPeriodTransformer;
 use Gems\Api\Fhir\Model\Transformer\QuestionnaireReferenceTransformer;
 use Gems\Api\Fhir\Model\Transformer\QuestionnaireTaskForTransformer;
@@ -164,7 +165,7 @@ class QuestionnaireTaskModel extends GemsJoinModel
         $metaModel->addTransformer(new QuestionnaireTaskStatusTransformer());
         $metaModel->addTransformer(new QuestionnaireTaskExecutionPeriodTransformer());
         $metaModel->addTransformer(new QuestionnaireOwnerTransformer());
-        $metaModel->addTransformer(new QuestionnaireTaskForTransformer());
+        $metaModel->addTransformer(new PatientReferenceTransformer('for'));
         $metaModel->addTransformer(new ManagingOrganizationTransformer('gto_id_organization', true));
         $metaModel->addTransformer(new QuestionnaireTaskInfoTransformer($this->resultFetcher, $currentUri));
         $metaModel->addTransformer(new QuestionnaireReferenceTransformer('focus'));
