@@ -6,6 +6,7 @@ namespace Gems\Api\Fhir;
 
 use Gems\Api\Fhir\Model\AppointmentModel;
 use Gems\Api\Fhir\Model\CarePlanModel;
+use Gems\Api\Fhir\Model\ConsentModel;
 use Gems\Api\Fhir\Model\EpisodeOfCareModel;
 use Gems\Api\Fhir\Model\LocationModel;
 use Gems\Api\Fhir\Model\OrganizationModel;
@@ -281,6 +282,22 @@ class ConfigProvider extends RestModelConfigProviderAbstract
                     'contact',
                 ],
                 idField: 'code',
+            ),
+
+            ...$this->createModelRoute(
+                endpoint: 'consent',
+                model: ConsentModel::class,
+                methods: ['GET'],
+                allowedFields: [
+                    'resourceType',
+                    'id',
+                    'status',
+                    'decision',
+                    'subject',
+                ],
+                idField: 'id',
+                idRegex: '[A-Za-z0-9\-@]+',
+                patientIdField: 'id',
             ),
         ];
     }
