@@ -53,7 +53,11 @@ class PatientTelecomTransformer extends ModelTransformerAbstract
         foreach ($data as $key => $item) {
             $elements = [];
             if (isset($item['gr2o_email'])) {
-                $elements[] = ['system' => 'email', 'value' => $item['gr2o_email']];
+                $elements[] = [
+                    'system' => 'email',
+                    'value' => $item['gr2o_email'],
+                    'rank' => 101 - $item['gr2o_mailable'],
+                ];
             }
 
             if (isset($item['grs_phone_1'])) {
