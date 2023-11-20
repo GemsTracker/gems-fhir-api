@@ -11,6 +11,7 @@ use Gems\Api\Fhir\Model\Transformer\PatientReferenceTransformer;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
 use Gems\Model\Transform\MaskTransformer;
+use Gems\Repository\StaffRepository;
 use Gems\Tracker;
 use Gems\User\Mask\MaskRepository;
 use Laminas\Db\Sql\Expression;
@@ -25,6 +26,7 @@ class CarePlanModel extends GemsJoinModel
         TranslatorInterface $translate,
         protected readonly Tracker $tracker,
         MaskRepository $maskRepository,
+        StaffRepository $staffRepository,
     ) {
         parent::__construct('gems__respondent2track', $metaModelLoader, $sqlRunner, $translate, 'carePlan');
         $metaModel = $this->getMetaModel();
@@ -90,6 +92,10 @@ END'), 'status');
             'label' => 'title',
             'apiName' => 'title',
         ]);
+        $metaModel->set('gr2t_track_info', [
+            'label' => 'description',
+            'apiName' => 'description',
+        ]);
         $metaModel->set('gtr_code', [
             'label' => 'code',
             'apiName' => 'code',
@@ -130,7 +136,7 @@ END'), 'status');
         ]);
 
         $metaModel->addTransformer(new PatientReferenceTransformer('subject'));
-        $metaModel->addTransformer(new CarePlanContributorTransformer());
+        $metaModel->addTransformer(new CarePlanContributorTransformer($staffRepository));
         $metaModel->addTransformer(new CarePlanPeriodTransformer());
         $metaModel->addTransformer(new CarePlanInfoTransformer());
 

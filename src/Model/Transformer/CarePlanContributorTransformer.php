@@ -3,12 +3,17 @@
 namespace Gems\Api\Fhir\Model\Transformer;
 
 use Gems\Api\Fhir\Endpoints;
+use Gems\Repository\StaffRepository;
 use MUtil\Model\DatabaseModelAbstract;
 use Zalt\Model\MetaModelInterface;
 use Zalt\Model\Transform\ModelTransformerAbstract;
 
 class CarePlanContributorTransformer extends ModelTransformerAbstract
 {
+    public function __construct(
+        protected readonly StaffRepository $staffRepository,
+    )
+    {}
     /**
      * This transform function checks the filter for
      * a) retreiving filters to be applied to the transforming data,
@@ -65,9 +70,18 @@ class CarePlanContributorTransformer extends ModelTransformerAbstract
                 'display' => $row['gor_name'],
             ];
 
+            $staffMembers = $this->staffRepository->getStaff();
+            $assignerName = $staffMembers[$row['gr2t_created_by']] ?? null;
+
+            $assignerInfo = [
+                'id' => (int)$row['gr2t_created_by'],
+                'type' => 'staff',
+                'display' => $assignerName,
+            ];
 
             $data[$key]['contributor'] = [
                 $organizationInfo,
+                $assignerInfo,
             ];
         }
 
