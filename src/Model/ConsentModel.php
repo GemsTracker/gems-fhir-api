@@ -37,5 +37,7 @@ class ConsentModel extends GemsJoinModel
         $this->metaModel->set('patient', [
             'label' => 'patient',
         ]);
+
+        $maskRepository->applyMaskToDataModel($this->metaModel);
     }
 }
