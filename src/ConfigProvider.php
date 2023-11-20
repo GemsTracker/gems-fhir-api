@@ -294,6 +294,8 @@ class ConfigProvider extends RestModelConfigProviderAbstract
                     'status',
                     'decision',
                     'subject',
+                    'controller',
+                    'category',
                 ],
                 idField: 'id',
                 idRegex: '[A-Za-z0-9\-@]+',
