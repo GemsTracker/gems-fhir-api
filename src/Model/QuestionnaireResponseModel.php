@@ -78,7 +78,7 @@ class QuestionnaireResponseModel extends GemsJoinModel
         $metaModel->addTransformer(new PatientReferenceTransformer('subject'));
         $metaModel->addTransformer(new QuestionnaireOwnerTransformer('source'));
         $metaModel->addTransformer(new ManagingOrganizationTransformer('gto_id_organization', true, 'author'));
-        $metaModel->addFilter(['gto_completion_time IS NOT NULL']);
+        //$metaModel->addFilter(['gto_completion_time IS NOT NULL']);
 
         $metaModel->addTransformer(new QuestionnaireResponseItemsTransformer($this->tracker, $this->locale->getLanguage()));
 
