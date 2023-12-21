@@ -9,6 +9,17 @@ use Zalt\Model\Transform\ModelTransformerAbstract;
 
 class QuestionnaireTaskStatusTransformer extends ModelTransformerAbstract
 {
+    public function getFieldInfo(MetaModelInterface $model): array
+    {
+        $model->get('gto_completion_time');
+        $model->get('gto_mail_sent_date');
+        $model->get('gto_start_time');
+        $model->get('grc_success');
+        $model->get('gto_valid_from');
+        $model->get('gto_valid_until');
+        return parent::getFieldInfo($model);
+    }
+    
     protected function getFilterPartFromStatus(string $status): ?string
     {
         return match ($status) {
