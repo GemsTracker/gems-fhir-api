@@ -53,7 +53,7 @@ class QuestionnaireResponseItemsTransformer extends ModelTransformerAbstract
                         $display = +$display;
                     }
 
-                    $answerItem['answer']['d'] = [
+                    $answerItem['answer']['valueCoding'] = [
                         'code' => $answer,
                         'display' => $display,
                         'system' => null, // Should reference a place to view the answer options
