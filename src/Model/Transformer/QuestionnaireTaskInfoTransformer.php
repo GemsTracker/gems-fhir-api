@@ -132,6 +132,12 @@ class QuestionnaireTaskInfoTransformer extends ModelTransformerAbstract
                     'type' => 'track',
                     'value' => $row['gtr_track_name'],
                 ];
+                if (isset($row['gtr_code'])) {
+                    $info[] = [
+                        'type' => 'trackCode',
+                        'value' => $row['gtr_code'],
+                    ];
+                }
             }
 
             if (isset($row['gto_id_respondent_track'])) {
