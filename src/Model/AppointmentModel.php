@@ -10,7 +10,6 @@ use Gems\Api\Fhir\Model\Transformer\AppointmentServiceTypeTransformer;
 use Gems\Api\Fhir\Model\Transformer\AppointmentStatusTransformer;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
-use Gems\Model\Transform\MaskTransformer;
 use Gems\User\Mask\MaskRepository;
 use Laminas\Db\Sql\Expression;
 use Zalt\Base\TranslatorInterface;
@@ -58,8 +57,6 @@ class AppointmentModel extends GemsJoinModel
 
         $this->addColumn('gap_admission_time', 'admission_date');
         $this->addColumn(new Expression('\'Appointment\''), 'resourceType');
-
-        $metaModel->addTransformer(new MaskTransformer($maskRepository));
 
         $metaModel->set('resourceType', [
             'label' => 'resourceType',
@@ -148,6 +145,6 @@ class AppointmentModel extends GemsJoinModel
         $metaModel->addTransformer(new AppointmentServiceTypeTransformer());
         $metaModel->addTransformer(new AppointmentParticipantTransformer());
 
-        $maskRepository->applyMaskToDataModel($metaModel);
+        $maskRepository->applyMaskToDataModel($metaModel, false, true);
     }
 }

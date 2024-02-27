@@ -86,6 +86,6 @@ class RelatedPersonModel extends GemsJoinModel
         $metaModel->addTransformer(new RelatedPersonHumanNameTransformer());
         $metaModel->addTransformer(new RelatedPersonTelecomTransformer());
 
-        $maskRepository->applyMaskToDataModel($metaModel);
+        $maskRepository->applyMaskToDataModel($metaModel, false, true);
     }
 }

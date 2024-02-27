@@ -9,7 +9,6 @@ use Gems\Api\Fhir\Model\Transformer\PatientTelecomTransformer;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
 use Gems\Model\Type\BooleanType;
-use Gems\Model\Transform\MaskTransformer;
 use Gems\User\Mask\MaskRepository;
 use Laminas\Db\Sql\Expression;
 use Zalt\Base\TranslatorInterface;
@@ -37,8 +36,6 @@ class PatientModel extends GemsJoinModel
         $this->addColumn(new Expression("CASE grs_gender WHEN 'M' THEN 'male' WHEN 'F' THEN 'female' ELSE 'unknown' END"), 'gender');
 
         $this->addColumn(new Expression('\'Patient\''), 'resourceType');
-
-        $metaModel->addTransformer(new MaskTransformer($maskRepository));
 
         $metaModel->set('resourceType', [
             'label' => 'resourceType',
@@ -110,6 +107,6 @@ class PatientModel extends GemsJoinModel
         $metaModel->addTransformer(new PatientTelecomTransformer());
         $metaModel->addTransformer(new ManagingOrganizationTransformer('gr2o_id_organization', true));
 
-        $maskRepository->applyMaskToDataModel($metaModel);
+        $maskRepository->applyMaskToDataModel($metaModel, false, true);
     }
 }
