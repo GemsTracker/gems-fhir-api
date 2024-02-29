@@ -33,6 +33,15 @@ class ManagingOrganizationTransformer extends ModelTransformerAbstract
         $this->fieldName = $fieldName;
     }
 
+    protected function getOrganizationValue(array|string|int $organizationValue): array|int
+    {
+        if (is_string($organizationValue)) {
+            $organizationValue = (int)str_replace(['Organization/', Endpoints::ORGANIZATION], '', $organizationValue);
+        }
+
+        return $organizationValue;
+    }
+
     /**
      * This transform function checks the filter for
      * a) retreiving filters to be applied to the transforming data,
@@ -45,15 +54,11 @@ class ManagingOrganizationTransformer extends ModelTransformerAbstract
     public function transformFilter(MetaModelInterface $model, array $filter): array
     {
         if (isset($filter[$this->fieldName])) {
-            $value = (int)str_replace(['Organization/', Endpoints::ORGANIZATION], '', $filter[$this->fieldName]);
-            $filter[$this->organizationIdField] = $value;
-
+            $filter[$this->organizationIdField] = $this->getOrganizationValue($filter[$this->fieldName]);
             unset($filter[$this->fieldName]);
         }
         if (isset($filter['organization'])) {
-            $value = (int)str_replace(['Organization/', Endpoints::ORGANIZATION], '', $filter['organization']);
-            $filter[$this->organizationIdField] = $value;
-
+            $filter[$this->organizationIdField] = $this->getOrganizationValue($filter['organization']);
             unset($filter['organization']);
         }
 
