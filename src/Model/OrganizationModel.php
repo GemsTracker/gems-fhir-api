@@ -20,7 +20,7 @@ class OrganizationModel extends GemsJoinModel
         SqlRunnerInterface $sqlRunner,
         TranslatorInterface $translate,
     ) {
-        parent::__construct('gems__organization', $metaModelLoader, $sqlRunner, $translate, 'organizations');
+        parent::__construct('gems__organizations', $metaModelLoader, $sqlRunner, $translate, 'organizations');
 
         $metaModel = $this->getMetaModel();
 
