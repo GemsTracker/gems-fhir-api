@@ -84,7 +84,10 @@ class AppointmentParticipantTransformer extends ModelTransformerAbstract
         }
 
         if (isset($filter['organization'])) {
-            $value = (int)str_replace(['Organization/', Endpoints::ORGANIZATION], '', $filter['organization']);
+            $value = $filter['organization'];
+            if (is_string($filter['organization'])) {
+                $value = (int)str_replace(['Organization/', Endpoints::ORGANIZATION], '', $filter['organization']);
+            }
             $filter['gap_id_organization'] = $value;
 
             unset($filter['organization']);
