@@ -79,6 +79,7 @@ class ConfigProvider extends RestModelConfigProviderAbstract
                 idField: 'id',
                 idRegex: '[A-Za-z0-9\-@]+',
                 patientIdField: 'id',
+                organizationIdField: 'organization',
             ),
             ...$this->createModelRoute(
                 endpoint: 'appointment',
@@ -100,6 +101,7 @@ class ConfigProvider extends RestModelConfigProviderAbstract
                 ],
                 idField: 'id',
                 patientIdField: 'patient',
+                organizationIdField: 'organization',
             ),
             ...$this->createModelRoute(
                 endpoint: 'episode-of-care',
@@ -119,6 +121,7 @@ class ConfigProvider extends RestModelConfigProviderAbstract
                 ],
                 idField: 'id',
                 patientIdField: 'patient',
+                organizationIdField: 'organization',
             ),
             ...$this->createModelRoute(
                 endpoint: 'location',
@@ -146,6 +149,7 @@ class ConfigProvider extends RestModelConfigProviderAbstract
                     'telecom',
                     'contact',
                 ],
+                organizationIdField: 'id',
             ),
             ...$this->createModelRoute(
                 endpoint: 'practitioner',
@@ -225,6 +229,7 @@ class ConfigProvider extends RestModelConfigProviderAbstract
                     'for',
                     'patient',
                 ],
+                organizationIdField: 'organization',
             ),
             ...$this->createModelRoute(
                 endpoint: 'questionnaire-response',
@@ -246,6 +251,7 @@ class ConfigProvider extends RestModelConfigProviderAbstract
                     'patient',
                     'subject'
                 ],
+                organizationIdField: 'organization',
             ),
             ...$this->createModelRoute(
                 endpoint: 'care-plan',
@@ -269,6 +275,7 @@ class ConfigProvider extends RestModelConfigProviderAbstract
                     'patient',
                     'subject'
                 ],
+                organizationIdField: 'gr2o_id_organization',
             ),
             ...$this->createModelRoute(
                 endpoint: 'codesystem/service-type',
