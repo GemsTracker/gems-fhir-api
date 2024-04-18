@@ -26,6 +26,7 @@ class CarePlanModel extends GemsJoinModel
         protected readonly Tracker $tracker,
         MaskRepository $maskRepository,
         StaffRepository $staffRepository,
+        \Zend_Db_Adapter_Abstract $db1, // Needed with Union Model in CarePlanInfoTransformer
     ) {
         parent::__construct('gems__respondent2track', $metaModelLoader, $sqlRunner, $translate, 'carePlan');
         $metaModel = $this->getMetaModel();
