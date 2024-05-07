@@ -4,6 +4,7 @@
 namespace Gems\Api\Fhir;
 
 
+use Gems\Api\Fhir\Handler\QuestionnaireTaskHandler;
 use Gems\Api\Fhir\Model\AppointmentModel;
 use Gems\Api\Fhir\Model\CarePlanModel;
 use Gems\Api\Fhir\Model\ConsentModel;
@@ -196,6 +197,7 @@ class ConfigProvider extends RestModelConfigProviderAbstract
             ),
             ...$this->createModelRoute(
                 endpoint: 'questionnaire-task',
+                handler: QuestionnaireTaskHandler::class,
                 model: QuestionnaireTaskModel::class,
                 methods: ['GET', 'PATCH'],
                 idRegex: '[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}',

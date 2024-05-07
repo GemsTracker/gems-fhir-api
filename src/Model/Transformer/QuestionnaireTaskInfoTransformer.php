@@ -121,10 +121,10 @@ class QuestionnaireTaskInfoTransformer extends ModelTransformerAbstract
                 ];
             }
 
-            $loginUrl = $this->getLoginUrl($row);
+            $loginUrl = rtrim($this->getLoginUrl($row), '/');
             $info[] = [
                 'type' => 'url',
-                'value' => $loginUrl . 'ask/to-survey/' . $row['gto_id_token'],
+                'value' => $loginUrl . '/ask/to-survey/' . $row['gto_id_token'],
             ];
 
             if (isset($row['gto_id_track'])) {

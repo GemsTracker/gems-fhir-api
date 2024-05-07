@@ -27,8 +27,6 @@ class QuestionnaireTaskModel extends GemsJoinModel
         MetaModelLoader $metaModelLoader,
         SqlRunnerInterface $sqlRunner,
         TranslatorInterface $translate,
-        protected readonly ResultFetcher $resultFetcher,
-        protected readonly UrlHelper $urlHelper,
         MaskRepository $maskRepository,
     ) {
         parent::__construct('gems__tokens', $metaModelLoader, $sqlRunner, $translate, 'questionaireTasks');
@@ -157,14 +155,11 @@ class QuestionnaireTaskModel extends GemsJoinModel
             'apiName' => 'roundOrder',
         ]);
 
-        $currentUri = $this->urlHelper->getBasePath();
-
         $metaModel->addTransformer(new QuestionnaireTaskStatusTransformer());
         $metaModel->addTransformer(new QuestionnaireTaskExecutionPeriodTransformer());
         $metaModel->addTransformer(new QuestionnaireOwnerTransformer());
         $metaModel->addTransformer(new PatientReferenceTransformer('for'));
         $metaModel->addTransformer(new ManagingOrganizationTransformer('gto_id_organization', true));
-        $metaModel->addTransformer(new QuestionnaireTaskInfoTransformer($this->resultFetcher, $currentUri));
         $metaModel->addTransformer(new QuestionnaireReferenceTransformer('focus'));
 
         $maskRepository->applyMaskToDataModel($metaModel, false, true);
