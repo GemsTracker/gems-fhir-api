@@ -10,6 +10,7 @@ use Gems\Api\Fhir\Model\Transformer\CarePlanPeriodTransformer;
 use Gems\Api\Fhir\Model\Transformer\PatientReferenceTransformer;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
+use Gems\Model\RespondentTrackFieldDataModel;
 use Gems\Repository\StaffRepository;
 use Gems\Tracker;
 use Gems\User\Mask\MaskRepository;
@@ -26,7 +27,7 @@ class CarePlanModel extends GemsJoinModel
         protected readonly Tracker $tracker,
         MaskRepository $maskRepository,
         StaffRepository $staffRepository,
-        \Zend_Db_Adapter_Abstract $db1, // Needed with Union Model in CarePlanInfoTransformer
+        RespondentTrackFieldDataModel $respondentTrackFieldDataModel,
     ) {
         parent::__construct('gems__respondent2track', $metaModelLoader, $sqlRunner, $translate, 'carePlan');
         $metaModel = $this->getMetaModel();
@@ -135,7 +136,7 @@ END'), 'status');
         $metaModel->addTransformer(new PatientReferenceTransformer('subject'));
         $metaModel->addTransformer(new CarePlanContributorTransformer($staffRepository));
         $metaModel->addTransformer(new CarePlanPeriodTransformer());
-        $metaModel->addTransformer(new CarePlanInfoTransformer());
+        $metaModel->addTransformer(new CarePlanInfoTransformer($respondentTrackFieldDataModel));
 
         $metaModel->addTransformer(new CarePlanActityTransformer($this->tracker));
 

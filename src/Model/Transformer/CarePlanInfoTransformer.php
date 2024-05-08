@@ -4,12 +4,20 @@ namespace Gems\Api\Fhir\Model\Transformer;
 
 
 use Gems\Api\Fhir\Endpoints;
+use Gems\Model\RespondentTrackFieldDataModel;
 use Zalt\Model\MetaModelInterface;
 use Zalt\Model\Transform\ModelTransformerAbstract;
 
 class CarePlanInfoTransformer extends ModelTransformerAbstract
 {
     use RespondentTrackFields;
+
+    public function __construct(
+        RespondentTrackFieldDataModel $respondentTrackFieldDataModel,
+    )
+    {
+        $this->respondentTrackFieldsDataModel = $respondentTrackFieldDataModel;
+    }
 
     /**
      * @param MetaModelInterface $model

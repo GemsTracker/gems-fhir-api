@@ -2,12 +2,12 @@
 
 namespace Gems\Api\Fhir\Model\Transformer;
 
-use Gems\Model\JoinModel;
+use Gems\Model\RespondentTrackFieldDataModel;
 use MUtil\Model\TableModel;
-use MUtil\Model\UnionModel;
 
 trait RespondentTrackFields
 {
+    protected RespondentTrackFieldDataModel $respondentTrackFieldsDataModel;
     /**
      * @param mixed[] $trackFieldInfo
      * @return string|null
@@ -59,66 +59,8 @@ trait RespondentTrackFields
         );
     }
 
-    protected function getTrackfieldModel(): UnionModel
+    protected function getTrackfieldModel(): RespondentTrackFieldDataModel
     {
-        $unionModel = new UnionModel('respondentTrackFieldData');
-
-        $trackFieldsModel = new JoinModel('trackFieldData', 'gems__respondent2track', 'gr2t', false);
-        $trackFieldsModel->addTable('gems__track_fields',
-            [
-                'gr2t_id_track' => 'gtf_id_track'
-            ],
-            'gtf',
-            false
-        );
-
-        $trackFieldsModel->addLeftTable(
-            'gems__respondent2track2field',
-            [
-                'gr2t_id_respondent_track' => 'gr2t2f_id_respondent_track',
-                'gtf_id_field' => 'gr2t2f_id_field',
-            ],
-            'gr2t2f',
-            false
-        );
-
-        $trackFieldsModel->addColumn(new \Zend_Db_Expr('\'field\''), 'type');
-        $trackFieldsModel->addColumn(new \Zend_Db_Expr('CONCAT(\'f__\', gtf_id_field)'), 'id');
-
-        $unionModel->addUnionModel($trackFieldsModel, null);
-
-        $trackAppointmentsModel = new JoinModel('trackAppointmentData', 'gems__respondent2track', 'gr2t', false);
-        $trackAppointmentsModel->addTable('gems__track_appointments',
-            [
-                'gr2t_id_track' => 'gtap_id_track'
-            ],
-            'gtf',
-            false
-        );
-
-        $trackAppointmentsModel->addLeftTable(
-            'gems__respondent2track2appointment',
-            [
-                'gr2t_id_respondent_track' => 'gr2t2a_id_respondent_track',
-                'gtap_id_app_field' => 'gr2t2a_id_app_field',
-            ],
-            'gr2t2f',
-            false
-        );
-
-        $trackAppointmentsModel->addColumn(new \Zend_Db_Expr('\'appointment\''), 'type');
-        $trackAppointmentsModel->addColumn(new \Zend_Db_Expr('CONCAT(\'a__\', gtap_id_app_field)'), 'id');
-        $trackAppointmentsModel->addColumn(new \Zend_Db_Expr('\'appointment\''), 'gtf_field_type');
-
-        $trackAppointmentdMapBase = $trackAppointmentsModel->getItemsOrdered();
-        $trackAppointmentdMap = array_combine($trackAppointmentdMapBase, str_replace(['gr2t2a_', 'gtap'], ['gr2t2f_', 'gtf'], $trackAppointmentdMapBase));
-        $trackAppointmentdMap['gr2t2a_id_app_field'] = 'gr2t2f_id_field';
-        $trackAppointmentdMap['gr2t2a_id_appointment'] = 'gr2t2f_value';
-        $trackAppointmentdMap[] = 'type';
-        $trackAppointmentdMap[] = 'id';
-
-        $unionModel->addUnionModel($trackAppointmentsModel, $trackAppointmentdMap);
-
-        return $unionModel;
+        return $this->respondentTrackFieldsDataModel;
     }
 }
