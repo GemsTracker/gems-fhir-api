@@ -3,6 +3,8 @@
 namespace Gems\Api\Fhir\Model\Transformer;
 
 
+use Gems\Agenda\Repository\AgendaStaffRepository;
+use Gems\Agenda\Repository\LocationRepository;
 use Gems\Api\Fhir\Endpoints;
 use Gems\Model\RespondentTrackFieldDataModel;
 use Zalt\Model\MetaModelInterface;
@@ -14,9 +16,13 @@ class CarePlanInfoTransformer extends ModelTransformerAbstract
 
     public function __construct(
         RespondentTrackFieldDataModel $respondentTrackFieldDataModel,
+        AgendaStaffRepository $agendaStaffRepository,
+        LocationRepository $locationRepository,
     )
     {
         $this->respondentTrackFieldsDataModel = $respondentTrackFieldDataModel;
+        $this->agendaStaffRepository = $agendaStaffRepository;
+        $this->locationRepository = $locationRepository;
     }
 
     /**

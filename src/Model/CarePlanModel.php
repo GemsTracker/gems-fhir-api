@@ -3,6 +3,8 @@
 namespace Gems\Api\Fhir\Model;
 
 
+use Gems\Agenda\Repository\AgendaStaffRepository;
+use Gems\Agenda\Repository\LocationRepository;
 use Gems\Api\Fhir\Model\Transformer\CarePlanActityTransformer;
 use Gems\Api\Fhir\Model\Transformer\CarePlanContributorTransformer;
 use Gems\Api\Fhir\Model\Transformer\CarePlanInfoTransformer;
@@ -28,6 +30,8 @@ class CarePlanModel extends GemsJoinModel
         MaskRepository $maskRepository,
         StaffRepository $staffRepository,
         RespondentTrackFieldDataModel $respondentTrackFieldDataModel,
+        AgendaStaffRepository $agendaStaffRepository,
+        LocationRepository $locationRepository,
     ) {
         parent::__construct('gems__respondent2track', $metaModelLoader, $sqlRunner, $translate, 'carePlan');
         $metaModel = $this->getMetaModel();
@@ -136,7 +140,7 @@ END'), 'status');
         $metaModel->addTransformer(new PatientReferenceTransformer('subject'));
         $metaModel->addTransformer(new CarePlanContributorTransformer($staffRepository));
         $metaModel->addTransformer(new CarePlanPeriodTransformer());
-        $metaModel->addTransformer(new CarePlanInfoTransformer($respondentTrackFieldDataModel));
+        $metaModel->addTransformer(new CarePlanInfoTransformer($respondentTrackFieldDataModel, $agendaStaffRepository, $locationRepository));
 
         $metaModel->addTransformer(new CarePlanActityTransformer($this->tracker));
 

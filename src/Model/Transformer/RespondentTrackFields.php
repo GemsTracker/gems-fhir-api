@@ -2,12 +2,18 @@
 
 namespace Gems\Api\Fhir\Model\Transformer;
 
+use Gems\Agenda\Repository\AgendaStaffRepository;
+use Gems\Agenda\Repository\LocationRepository;
 use Gems\Model\RespondentTrackFieldDataModel;
-use MUtil\Model\TableModel;
 
 trait RespondentTrackFields
 {
     protected RespondentTrackFieldDataModel $respondentTrackFieldsDataModel;
+
+    protected AgendaStaffRepository $agendaStaffRepository;
+
+    protected LocationRepository $locationRepository;
+
     /**
      * @param mixed[] $trackFieldInfo
      * @return string|null
@@ -26,22 +32,12 @@ trait RespondentTrackFields
 
     protected function getCaretakerName(int $caretakerId): ?string
     {
-        $model = new TableModel('gems__agenda_staff');
-        $result = $model->loadFirst(['gas_id_staff' => $caretakerId]);
-        if ($result) {
-            return $result['gas_name'];
-        }
-        return null;
+        return $this->agendaStaffRepository->getStaffNameFromId($caretakerId);
     }
 
     protected function getLocationName(int $locationId): ?string
     {
-        $model = new TableModel('gems__locations');
-        $result = $model->loadFirst(['glo_id_location' => $locationId]);
-        if ($result) {
-            return $result['glo_name'];
-        }
-        return null;
+        return $this->locationRepository->getLocationName($locationId);
     }
 
     /**
