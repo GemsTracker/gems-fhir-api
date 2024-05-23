@@ -28,11 +28,15 @@ class QuestionnaireTaskModel extends GemsJoinModel
         SqlRunnerInterface $sqlRunner,
         TranslatorInterface $translate,
         MaskRepository $maskRepository,
-    ) {
+    )
+    {
         parent::__construct('gems__tokens', $metaModelLoader, $sqlRunner, $translate, 'questionaireTasks');
         $metaModel = $this->getMetaModel();
 
-        $this->addTable('gems__respondent2org', ['gr2o_id_user' => 'gto_id_respondent', 'gr2o_id_organization' => 'gto_id_organization']);
+        $this->addTable(
+            'gems__respondent2org',
+            ['gr2o_id_user' => 'gto_id_respondent', 'gr2o_id_organization' => 'gto_id_organization']
+        );
         $this->addTable('gems__respondent2track', ['gto_id_respondent_track' => 'gr2t_id_respondent_track']);
         $this->addTable('gems__reception_codes', ['gto_reception_code' => 'grc_id_reception_code']);
         $this->addTable('gems__surveys', ['gto_id_survey' => 'gsu_id_survey']);
@@ -41,7 +45,10 @@ class QuestionnaireTaskModel extends GemsJoinModel
         $this->addTable('gems__organizations', ['gto_id_organization' => 'gor_id_organization']);
         $this->addLeftTable('gems__staff', ['gto_by' => 'gsf_id_user']);
         $this->addLeftTable('gems__agenda_staff', ['gsf_id_user' => 'gas_id_user']);
-        $this->addLeftTable('gems__respondent_relations', ['gto_id_respondent' => 'grr_id_respondent', 'gto_id_relation' => 'grr_id']);
+        $this->addLeftTable(
+            'gems__respondent_relations',
+            ['gto_id_respondent' => 'grr_id_respondent', 'gto_id_relation' => 'grr_id']
+        );
 
 
         $this->addColumn(new Expression('\'QuestionnaireTask\''), 'resourceType');
@@ -155,13 +162,16 @@ class QuestionnaireTaskModel extends GemsJoinModel
             'apiName' => 'roundOrder',
         ]);
 
-        $metaModel->addTransformer(new QuestionnaireTaskStatusTransformer());
-        $metaModel->addTransformer(new QuestionnaireTaskExecutionPeriodTransformer());
-        $metaModel->addTransformer(new QuestionnaireOwnerTransformer());
-        $metaModel->addTransformer(new PatientReferenceTransformer('for'));
-        $metaModel->addTransformer(new ManagingOrganizationTransformer('gto_id_organization', true));
-        $metaModel->addTransformer(new QuestionnaireReferenceTransformer('focus'));
-
         $maskRepository->applyMaskToDataModel($metaModel, false, true);
+    }
+
+    protected function addTransformers(): void
+    {
+        $this->metaModel->addTransformer(new QuestionnaireTaskStatusTransformer());
+        $this->metaModel->addTransformer(new QuestionnaireTaskExecutionPeriodTransformer());
+        $this->metaModel->addTransformer(new QuestionnaireOwnerTransformer());
+        $this->metaModel->addTransformer(new PatientReferenceTransformer('for'));
+        $this->metaModel->addTransformer(new ManagingOrganizationTransformer('gto_id_organization', true));
+        $this->metaModel->addTransformer(new QuestionnaireReferenceTransformer('focus'));
     }
 }

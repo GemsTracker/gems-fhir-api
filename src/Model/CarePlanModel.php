@@ -28,11 +28,12 @@ class CarePlanModel extends GemsJoinModel
         TranslatorInterface $translate,
         protected readonly Tracker $tracker,
         MaskRepository $maskRepository,
-        StaffRepository $staffRepository,
-        RespondentTrackFieldDataModel $respondentTrackFieldDataModel,
-        AgendaStaffRepository $agendaStaffRepository,
-        LocationRepository $locationRepository,
-    ) {
+        protected readonly StaffRepository $staffRepository,
+        protected readonly RespondentTrackFieldDataModel $respondentTrackFieldDataModel,
+        protected readonly AgendaStaffRepository $agendaStaffRepository,
+        protected readonly LocationRepository $locationRepository,
+    )
+    {
         parent::__construct('gems__respondent2track', $metaModelLoader, $sqlRunner, $translate, 'carePlan');
         $metaModel = $this->getMetaModel();
 
@@ -49,17 +50,20 @@ class CarePlanModel extends GemsJoinModel
                 'gr2t_id_organization' => 'gr2o_id_organization'
             ],
         );
-        $this->addTable('gems__tracks',
+        $this->addTable(
+            'gems__tracks',
             [
                 'gr2t_id_track' => 'gtr_id_track',
             ],
         );
-        $this->addTable('gems__organizations',
+        $this->addTable(
+            'gems__organizations',
             [
                 'gr2t_id_organization' => 'gor_id_organization',
             ],
         );
-        $this->addTable('gems__reception_codes',
+        $this->addTable(
+            'gems__reception_codes',
             [
                 'gr2t_reception_code' => 'grc_id_reception_code',
             ],
@@ -67,12 +71,17 @@ class CarePlanModel extends GemsJoinModel
 
         $this->addColumn(new Expression('\'CarePlan\''), 'resourceType');
         $this->addColumn(new Expression('\'intent\''), 'order');
-        $this->addColumn(new Expression('
+        $this->addColumn(
+            new Expression(
+                '
 CASE 
     WHEN grc_success = 1 THEN \'active\' 
     WHEN gr2t_reception_code = \'retract\' THEN \'revoked\' 
     ELSE \'unknown\' 
-END'), 'status');
+END'
+            ),
+            'status'
+        );
 
         $metaModel->set('resourceType', [
             'label' => 'resourceType'
@@ -137,13 +146,24 @@ END'), 'status');
             'label' => 'patient.email'
         ]);
 
-        $metaModel->addTransformer(new PatientReferenceTransformer('subject'));
-        $metaModel->addTransformer(new CarePlanContributorTransformer($staffRepository));
-        $metaModel->addTransformer(new CarePlanPeriodTransformer());
-        $metaModel->addTransformer(new CarePlanInfoTransformer($respondentTrackFieldDataModel, $agendaStaffRepository, $locationRepository));
-
-        $metaModel->addTransformer(new CarePlanActityTransformer($this->tracker));
+        $this->addTransformers();
 
         $maskRepository->applyMaskToDataModel($metaModel, false, true);
+    }
+
+    public function addTransformers(): void
+    {
+        $this->metaModel->addTransformer(new PatientReferenceTransformer('subject'));
+        $this->metaModel->addTransformer(new CarePlanContributorTransformer($this->staffRepository));
+        $this->metaModel->addTransformer(new CarePlanPeriodTransformer());
+        $this->metaModel->addTransformer(new CarePlanInfoTransformer(
+            $this->respondentTrackFieldDataModel,
+            $this->agendaStaffRepository,
+            $this->locationRepository
+        ));
+
+        $this->metaModel->addTransformer(new CarePlanActityTransformer($this->tracker));
+
+
     }
 }
