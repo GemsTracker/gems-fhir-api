@@ -162,6 +162,8 @@ class QuestionnaireTaskModel extends GemsJoinModel
             'apiName' => 'roundOrder',
         ]);
 
+        $this->addTransformers();
+
         $maskRepository->applyMaskToDataModel($metaModel, false, true);
     }
 
