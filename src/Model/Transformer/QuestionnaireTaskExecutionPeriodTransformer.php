@@ -66,22 +66,18 @@ class QuestionnaireTaskExecutionPeriodTransformer extends ModelTransformerAbstra
                     $row['gto_valid_from_manual'] = 0;
                     $row['gto_valid_from'] = null;
                 } else {
-                    $start = new DateTimeImmutable($row['executionPeriod']['start']);
                     $row['gto_valid_from_manual'] = 1;
-                    $row['gto_valid_from'] = $start->format('Y-m-d H:i:s');
+                    $row['gto_valid_from'] = new DateTimeImmutable($row['executionPeriod']['start']);
                 }
-                $model->remove('gto_valid_from', MetaModel::SAVE_TRANSFORMER);
             }
             if (array_key_exists('end', $row['executionPeriod'])) {
                 if ($row['executionPeriod']['end'] === null) {
                     $row['gto_valid_until_manual'] = 0;
                     $row['gto_valid_until'] = null;
                 } else {
-                    $end = new DateTimeImmutable($row['executionPeriod']['end']);
                     $row['gto_valid_until_manual'] = 1;
-                    $row['gto_valid_until'] = $end->format('Y-m-d H:i:s');
+                    $row['gto_valid_until'] = new DateTimeImmutable($row['executionPeriod']['end']);
                 }
-                $model->remove('gto_valid_until', MetaModel::SAVE_TRANSFORMER);
             }
         }
 
