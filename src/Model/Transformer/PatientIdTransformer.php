@@ -18,14 +18,14 @@ class PatientIdTransformer extends ModelTransformerAbstract
             if (!is_array($filter['id'])) {
                 $idParts = explode('@', $filter['id']);
                 $filter['gr2o_patient_nr'] = $idParts[0];
-                $filter['gr2o_id_organization'] = $this->getAllowedOrganization($idParts[1], $filter);
+                $filter['gr2o_id_organization'] = $this->getAllowedOrganization((int)$idParts[1], $filter);
             } else {
                 $multiPatientFilter = [];
                 foreach($filter['id'] as $combinedId) {
                     $idParts = explode('@', $combinedId);
                     $patientFilter = [
                         'gr2o_patient_nr' => $idParts[0],
-                        'gr2o_id_organization' => $this->getAllowedOrganization($idParts[1], $filter),
+                        'gr2o_id_organization' => $this->getAllowedOrganization((int)$idParts[1], $filter),
                     ];
                     $multiPatientFilter[] = $patientFilter;
                 }
