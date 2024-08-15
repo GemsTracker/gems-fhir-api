@@ -161,7 +161,7 @@ class QuestionnaireTaskInfoTransformer extends ModelTransformerAbstract
      */
     protected function getLoginUrl(array $row): string
     {
-        if ($row['gor_url_base'] !== null) {
+        /*if ($row['gor_url_base'] !== null) {
             $baseUrls = explode(' ', $row['gor_url_base']);
             if (array_key_exists('gor_url_base', $row)) {
                 $baseUrl = reset($baseUrls);
@@ -169,7 +169,7 @@ class QuestionnaireTaskInfoTransformer extends ModelTransformerAbstract
                     return $baseUrl;
                 }
             }
-        }
+        }*/
 
         return $this->currentUri;
     }
