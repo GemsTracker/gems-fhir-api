@@ -65,5 +65,10 @@
     "branch-alias": {
       "dev-main": "1.0.x-dev"
     }
+  },
+  "scripts": {
+    "stan": [
+      "vendor/bin/phpstan --memory-limit=512M"
+    ]
   }
 }

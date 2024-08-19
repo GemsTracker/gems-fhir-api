@@ -59,4 +59,13 @@ class QuestionnaireModel extends GemsJoinModel
         $metaModel->addTransformer(new QuestionnaireSubjectTypeTransformer());
         $metaModel->addTransformer(new QuestionnaireItemsTransformer($this->tracker, $this->locale->getLanguage()));
     }
+
+    protected function checkFilter(mixed $filter): array
+    {
+        $filter = parent::checkFilter($filter);
+
+        $filter['gsu_surveyor_active'] = 1;
+
+        return $filter;
+    }
 }
