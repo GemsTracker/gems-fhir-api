@@ -141,10 +141,15 @@ class AppointmentModel extends GemsJoinModel
             'label' => 'location.name',
         ]);
 
-        $metaModel->addTransformer(new AppointmentStatusTransformer());
-        $metaModel->addTransformer(new AppointmentServiceTypeTransformer());
-        $metaModel->addTransformer(new AppointmentParticipantTransformer());
+        $this->addTransformers();
 
         $maskRepository->applyMaskToDataModel($metaModel, false, true);
+    }
+
+    protected function addTransformers(): void
+    {
+        $this->metaModel->addTransformer(new AppointmentStatusTransformer());
+        $this->metaModel->addTransformer(new AppointmentServiceTypeTransformer());
+        $this->metaModel->addTransformer(new AppointmentParticipantTransformer());
     }
 }
