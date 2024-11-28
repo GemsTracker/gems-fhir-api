@@ -43,7 +43,7 @@ class QuestionnaireTaskHandler extends ModelRestHandler
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $this->currentBaseUrl = RequestUtil::getCurrentUrl($request);
+        $this->currentBaseUrl = RequestUtil::getCurrentSite($request);
         return parent::handle($request);
     }
 }
