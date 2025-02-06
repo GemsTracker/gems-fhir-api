@@ -9,6 +9,7 @@ use Gems\Api\Fhir\Model\Transformer\ConsentStatusTransformer;
 use Gems\Api\Fhir\Model\Transformer\PatientReferenceTransformer;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
+use Gems\Model\Transform\MaskTransformer;
 use Gems\User\Mask\MaskRepository;
 use Laminas\Db\Sql\Expression;
 use Zalt\Base\TranslatorInterface;
@@ -58,6 +59,6 @@ class ConsentModel extends GemsJoinModel
             'label' => 'category',
         ]);
 
-        $maskRepository->applyMaskToDataModel($this->metaModel);
+        $this->metaModel->addTransformer(new MaskTransformer($maskRepository));
     }
 }

@@ -8,6 +8,7 @@ use Gems\Api\Fhir\Model\Transformer\PatientIdTransformer;
 use Gems\Api\Fhir\Model\Transformer\PatientTelecomTransformer;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
+use Gems\Model\Transform\MaskTransformer;
 use Gems\Model\Type\BooleanType;
 use Gems\User\Mask\MaskRepository;
 use Laminas\Db\Sql\Expression;
@@ -102,11 +103,10 @@ class PatientModel extends GemsJoinModel
             'label' => 'organization_code',
         ]);
 
+        $metaModel->addTransformer(new MaskTransformer($maskRepository));
         $metaModel->addTransformer(new PatientIdTransformer());
         $metaModel->addTransformer(new PatientHumanNameTransformer());
         $metaModel->addTransformer(new PatientTelecomTransformer());
         $metaModel->addTransformer(new ManagingOrganizationTransformer('gr2o_id_organization', true));
-
-        $maskRepository->applyMaskToDataModel($metaModel, false, true);
     }
 }

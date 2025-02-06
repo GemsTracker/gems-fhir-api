@@ -8,6 +8,7 @@ use Gems\Api\Fhir\Model\Transformer\ManagingOrganizationTransformer;
 use Gems\Api\Fhir\Model\Transformer\PatientReferenceTransformer;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
+use Gems\Model\Transform\MaskTransformer;
 use Gems\User\Mask\MaskRepository;
 use Laminas\Db\Sql\Expression;
 use MUtil\Model\Type\JsonData;
@@ -63,11 +64,10 @@ class EpisodeOfCareModel extends GemsJoinModel
         $jsonType->apply($this, 'gec_diagnosis_data', false);
         $jsonType->apply($this, 'gec_extra_data',     false);*/
 
+        $metaModel->addTransformer(new MaskTransformer($maskRepository));
         $metaModel->addTransformer(new EpisodeOfCareStatusTransformer());
         $metaModel->addTransformer(new EpisodeOfCarePeriodTransformer());
         $metaModel->addTransformer(new PatientReferenceTransformer('patient'));
         $metaModel->addTransformer(new ManagingOrganizationTransformer('gec_id_organization', true));
-
-        $maskRepository->applyMaskToDataModel($metaModel, false, true);
     }
 }

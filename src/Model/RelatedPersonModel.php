@@ -8,6 +8,7 @@ use Gems\Api\Fhir\Model\Transformer\RelatedPersonHumanNameTransformer;
 use Gems\Api\Fhir\Model\Transformer\RelatedPersonTelecomTransformer;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
+use Gems\Model\Transform\MaskTransformer;
 use Gems\Model\Type\BooleanType;
 use Gems\User\Mask\MaskRepository;
 use Laminas\Db\Sql\Expression;
@@ -81,11 +82,9 @@ class RelatedPersonModel extends GemsJoinModel
             'label' => 'email',
         ]);
 
-
+        $metaModel->addTransformer(new MaskTransformer($maskRepository));
         $metaModel->addTransformer(new PatientReferenceTransformer('patient'));
         $metaModel->addTransformer(new RelatedPersonHumanNameTransformer());
         $metaModel->addTransformer(new RelatedPersonTelecomTransformer());
-
-        $maskRepository->applyMaskToDataModel($metaModel, false, true);
     }
 }
