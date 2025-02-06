@@ -13,6 +13,7 @@ use Gems\Api\Fhir\Model\Transformer\PatientReferenceTransformer;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
 use Gems\Model\RespondentTrackFieldDataModel;
+use Gems\Model\Transform\MaskTransformer;
 use Gems\Repository\StaffRepository;
 use Gems\Tracker;
 use Gems\User\Mask\MaskRepository;
@@ -145,10 +146,8 @@ END'
         $metaModel->set('patient.email', [
             'label' => 'patient.email'
         ]);
-
+        $metaModel->addTransformer(new MaskTransformer($maskRepository));
         $this->addTransformers();
-
-        $maskRepository->applyMaskToDataModel($metaModel, false, true);
     }
 
     public function addTransformers(): void

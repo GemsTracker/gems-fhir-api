@@ -11,6 +11,7 @@ use Gems\Api\Fhir\Model\Transformer\QuestionnaireResponseStatusTransformer;
 use Gems\Locale\Locale;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
+use Gems\Model\Transform\MaskTransformer;
 use Gems\Tracker;
 use Gems\User\Mask\MaskRepository;
 use Laminas\Db\Sql\Expression;
@@ -71,6 +72,7 @@ class QuestionnaireResponseModel extends GemsJoinModel
             'label' => 'item',
         ]);
 
+        $metaModel->addTransformer(new MaskTransformer($maskRepository));
         $metaModel->addTransformer(new QuestionnaireResponseStatusTransformer());
         $metaModel->addTransformer(new PatientReferenceTransformer('subject'));
         $metaModel->addTransformer(new QuestionnaireOwnerTransformer('source'));
@@ -78,7 +80,5 @@ class QuestionnaireResponseModel extends GemsJoinModel
         //$metaModel->addFilter(['gto_completion_time IS NOT NULL']);
 
         $metaModel->addTransformer(new QuestionnaireResponseItemsTransformer($this->tracker, $this->locale->getLanguage()));
-
-        $maskRepository->applyMaskToDataModel($metaModel, false, true);
     }
 }
