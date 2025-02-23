@@ -265,6 +265,7 @@ class ConfigProvider extends RestModelConfigProviderAbstract
                     'status',
                     'intent',
                     'title',
+                    'organization',
                     'description',
                     'code',
                     'created',

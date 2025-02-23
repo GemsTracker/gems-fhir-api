@@ -99,6 +99,10 @@ END'
         $metaModel->set('period', [
             'label' => 'period',
         ]);
+        $metaModel->set('gor_name', [
+            'label' => 'organization',
+            'apiName' => 'organization',
+        ]);
         $metaModel->set('gtr_track_name', [
             'label' => 'title',
             'apiName' => 'title',
@@ -163,7 +167,5 @@ END'
         ));
 
         $this->metaModel->addTransformer(new CarePlanActityTransformer($this->tracker));
-
-
     }
 }
