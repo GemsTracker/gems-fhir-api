@@ -9,10 +9,13 @@ use Gems\Api\Fhir\Model\Transformer\CarePlanActityTransformer;
 use Gems\Api\Fhir\Model\Transformer\CarePlanContributorTransformer;
 use Gems\Api\Fhir\Model\Transformer\CarePlanInfoTransformer;
 use Gems\Api\Fhir\Model\Transformer\CarePlanPeriodTransformer;
+use Gems\Api\Fhir\Model\Transformer\OrganizationAccessTransformer;
 use Gems\Api\Fhir\Model\Transformer\PatientReferenceTransformer;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
 use Gems\Model\RespondentTrackFieldDataModel;
+use Gems\Model\Type\BooleanType;
+use Gems\Repository\OrganizationRepository;
 use Gems\Repository\StaffRepository;
 use Gems\Tracker;
 use Gems\User\Mask\MaskRepository;
@@ -32,6 +35,7 @@ class CarePlanModel extends GemsJoinModel
         protected readonly RespondentTrackFieldDataModel $respondentTrackFieldDataModel,
         protected readonly AgendaStaffRepository $agendaStaffRepository,
         protected readonly LocationRepository $locationRepository,
+        protected readonly OrganizationRepository $organizationRepository,
     )
     {
         parent::__construct('gems__respondent2track', $metaModelLoader, $sqlRunner, $translate, 'carePlan');
@@ -149,6 +153,9 @@ END'
         $metaModel->set('patient.email', [
             'label' => 'patient.email'
         ]);
+        $metaModel->set(OrganizationAccessTransformer::FIELD_NAME, [
+            'label' => OrganizationAccessTransformer::FIELD_NAME,
+        ]);
 
         $this->addTransformers();
 
@@ -158,6 +165,7 @@ END'
     public function addTransformers(): void
     {
         $this->metaModel->addTransformer(new PatientReferenceTransformer('subject'));
+        $this->metaModel->addTransformer(new OrganizationAccessTransformer($this->organizationRepository));
         $this->metaModel->addTransformer(new CarePlanContributorTransformer($this->staffRepository));
         $this->metaModel->addTransformer(new CarePlanPeriodTransformer());
         $this->metaModel->addTransformer(new CarePlanInfoTransformer(
