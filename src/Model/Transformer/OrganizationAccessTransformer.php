@@ -9,7 +9,7 @@ use Zalt\Model\Transform\ModelTransformerAbstract;
 
 class OrganizationAccessTransformer extends ModelTransformerAbstract
 {
-    const FIELD_NAME = 'full';
+    const FIELD_NAME = 'allAllowedOrgs';
 
     public function __construct(
         protected readonly OrganizationRepository $organizationRepository,
