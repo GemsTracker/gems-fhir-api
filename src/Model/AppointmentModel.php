@@ -10,6 +10,7 @@ use Gems\Api\Fhir\Model\Transformer\AppointmentServiceTypeTransformer;
 use Gems\Api\Fhir\Model\Transformer\AppointmentStatusTransformer;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
+use Gems\Model\Transform\MaskTransformer;
 use Gems\User\Mask\MaskRepository;
 use Laminas\Db\Sql\Expression;
 use Zalt\Base\TranslatorInterface;
@@ -141,9 +142,8 @@ class AppointmentModel extends GemsJoinModel
             'label' => 'location.name',
         ]);
 
+        $this->metaModel->addTransformer(new MaskTransformer($maskRepository));
         $this->addTransformers();
-
-        $maskRepository->applyMaskToDataModel($metaModel, false, true);
     }
 
     protected function addTransformers(): void

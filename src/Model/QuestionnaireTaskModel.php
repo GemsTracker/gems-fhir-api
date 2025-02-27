@@ -14,6 +14,7 @@ use Gems\Api\Fhir\Model\Transformer\QuestionnaireTaskStatusTransformer;
 use Gems\Db\ResultFetcher;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
+use Gems\Model\Transform\MaskTransformer;
 use Gems\User\Mask\MaskRepository;
 use Laminas\Db\Sql\Expression;
 use Mezzio\Helper\UrlHelper;
@@ -162,9 +163,8 @@ class QuestionnaireTaskModel extends GemsJoinModel
             'apiName' => 'roundOrder',
         ]);
 
+        $metaModel->addTransformer(new MaskTransformer($maskRepository));
         $this->addTransformers();
-
-        $maskRepository->applyMaskToDataModel($metaModel, false, true);
     }
 
     protected function addTransformers(): void
