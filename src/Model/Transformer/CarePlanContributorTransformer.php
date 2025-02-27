@@ -66,6 +66,7 @@ class CarePlanContributorTransformer extends ModelTransformerAbstract
         foreach($data as $key=>$row) {
             $organizationInfo = [
                 'id' => (int)$row['gr2t_id_organization'],
+                'type' => 'Organization',
                 'reference' => Endpoints::ORGANIZATION . $row['gr2t_id_organization'],
                 'display' => $row['gor_name'],
             ];
