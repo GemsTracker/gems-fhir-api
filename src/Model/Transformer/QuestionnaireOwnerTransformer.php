@@ -182,7 +182,7 @@ class QuestionnaireOwnerTransformer extends ModelTransformerAbstract
     protected function getOrganizationReference(array $row): array
     {
         return [
-            'type' => 'Staff',
+            'type' => 'Organization',
             'id' => $row['gto_id_organization'],
             'reference' => Endpoints::ORGANIZATION . $row['gto_id_organization'],
             'display' => $row['gor_name'],
