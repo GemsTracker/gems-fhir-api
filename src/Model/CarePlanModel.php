@@ -139,7 +139,10 @@ END'
             'label' => 'trackId',
             'apiName' => 'track_id',
         ]);
-
+        $metaModel->set('gr2t_id_organization', [
+            'label' => 'organizationId',
+            'apiName' => 'organizationId',
+        ]);
         $metaModel->set('patient', [
             'label' => 'patient'
         ]);
