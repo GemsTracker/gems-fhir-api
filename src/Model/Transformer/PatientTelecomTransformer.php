@@ -56,7 +56,7 @@ class PatientTelecomTransformer extends ModelTransformerAbstract
                 $elements[] = [
                     'system' => 'email',
                     'value' => $item['gr2o_email'],
-                    'rank' => 101 - $item['gr2o_mailable'],
+                    'rank' => 101 - ($item['gr2o_mailable'] ?? 1),
                 ];
             }
 
