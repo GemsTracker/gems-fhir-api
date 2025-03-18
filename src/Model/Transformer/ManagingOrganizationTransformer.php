@@ -33,6 +33,10 @@ class ManagingOrganizationTransformer extends ModelTransformerAbstract
         $this->fieldName = $fieldName;
     }
 
+    /**
+     * @param mixed[]|string|int $organizationValue
+     * @return mixed[]|int
+     */
     protected function getOrganizationValue(array|string|int $organizationValue): array|int
     {
         if (is_string($organizationValue)) {

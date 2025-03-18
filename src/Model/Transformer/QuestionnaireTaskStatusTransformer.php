@@ -9,6 +9,10 @@ use Zalt\Model\Transform\ModelTransformerAbstract;
 
 class QuestionnaireTaskStatusTransformer extends ModelTransformerAbstract
 {
+    /**
+     * @param MetaModelInterface $model
+     * @return mixed[]
+     */
     public function getFieldInfo(MetaModelInterface $model): array
     {
         $model->get('gto_completion_time');

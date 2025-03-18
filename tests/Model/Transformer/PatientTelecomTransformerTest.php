@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Model\Transformer;
 
 use Gems\Api\Fhir\Model\Transformer\PatientTelecomTransformer;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Zalt\Model\MetaModelInterface;
 
+#[CoversClass(PatientTelecomTransformer::class)]
 class PatientTelecomTransformerTest extends TestCase
 {
     private function getMetaModel(): MetaModelInterface

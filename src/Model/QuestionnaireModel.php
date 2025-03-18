@@ -60,6 +60,10 @@ class QuestionnaireModel extends GemsJoinModel
         $metaModel->addTransformer(new QuestionnaireItemsTransformer($this->tracker, $this->locale->getLanguage()));
     }
 
+    /**
+     * @param mixed $filter
+     * @return mixed[]
+     */
     protected function checkFilter(mixed $filter): array
     {
         $filter = parent::checkFilter($filter);
