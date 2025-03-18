@@ -2,12 +2,19 @@
 
 namespace Gems\Api\Fhir\Model\Transformer;
 
-use MUtil\Model\DatabaseModelAbstract;
+use Gems\Db\ResultFetcher;
+use Laminas\Db\Sql\Expression;
 use Zalt\Model\MetaModelInterface;
 use Zalt\Model\Transform\ModelTransformerAbstract;
 
 class PatientHumanNameTransformer extends ModelTransformerAbstract
 {
+   public function __construct(
+       private readonly ResultFetcher $resultFetcher,
+   )
+   {
+   }
+
     /**
      * This transform function checks the filter for
      * a) retreiving filters to be applied to the transforming data,
@@ -33,24 +40,19 @@ class PatientHumanNameTransformer extends ModelTransformerAbstract
 
         if (isset($filter['family'])) {
             $value = '%'.$filter['family'].'%';
-            if ($model instanceof DatabaseModelAbstract) {
-                $adapter = $model->getAdapter();
-                $value = $adapter->quote($value);
-                $filter[] = new \Zend_Db_Expr("CONCAT_WS(' ', grs_surname_prefix, grs_last_name) LIKE ".$value);
-            }
+            $platform = $this->resultFetcher->getPlatform();
+            $value = $platform->quoteValue($value);
+            $filter[] = new Expression("CONCAT_WS(' ', grs_surname_prefix, grs_last_name) LIKE " . $value);
 
             unset($filter['family']);
         }
 
         if (isset($filter['given'])) {
             $value = '%'.$filter['given'].'%';
-            if ($model instanceof DatabaseModelAbstract) {
-                $adapter = $model->getAdapter();
-                $value = $adapter->quote($value);
-                $filter[] = "(grs_first_name LIKE ".$value.")
-                 OR (grs_initials_name LIKE ".$value.")
-                ";
-            }
+            $platform = $this->resultFetcher->getPlatform();
+            $value = $platform->quoteValue($value);
+            $filter[] = "(grs_first_name LIKE ".$value.")
+             OR (grs_initials_name LIKE ".$value.")";
 
             unset($filter['given']);
         }
@@ -77,19 +79,40 @@ class PatientHumanNameTransformer extends ModelTransformerAbstract
                 $familyName = $item['grs_surname_prefix'] . ' ' . $familyName;
             }
 
-            $givenName = $item['grs_first_name'];
-            if ($givenName === null && isset($item['grs_initials_name'])) {
-                $givenName = $item['grs_initials_name'];
+            $givenNames = [];
+
+            if (isset($item['grs_first_name'])) {
+                $givenNames[] = [
+                    'value' => $item['grs_first_name'],
+                    'extension' => [
+                        [
+                            'url' => 'http://hl7.org/fhir/StructureDefinition/iso21090-EN-qualifier',
+                            'valueCode' => 'LS',
+                        ]
+                    ]
+                ];
             }
 
-            if (empty(trim((string)$givenName))) {
-                $givenName = null;
+            if (isset($item['grs_initials_name'])) {
+                $givenNames[] = [
+                    'value' => $item['grs_initials_name'],
+                    'extension' => [
+                        [
+                            'url' => 'http://hl7.org/fhir/StructureDefinition/iso21090-EN-qualifier',
+                            'valueCode' => 'IN',
+                        ]
+                    ]
+                ];
             }
 
-            $data[$key]['name'][] = [
+            $nameParts = [
                 'family' => $familyName,
-                'given' => $givenName,
             ];
+            if ($givenNames) {
+                $nameParts['given'] = $givenNames;
+            }
+
+            $data[$key]['name'][] = $nameParts;
         }
 
         return $data;
