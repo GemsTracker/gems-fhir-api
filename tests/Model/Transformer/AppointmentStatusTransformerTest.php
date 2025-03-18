@@ -3,10 +3,12 @@
 namespace GemsFhirApiTest\Model\Transformer;
 
 use Gems\Api\Fhir\Model\Transformer\AppointmentStatusTransformer;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Zalt\Model\MetaModel;
 
+#[CoversClass(AppointmentStatusTransformer::class)]
 class AppointmentStatusTransformerTest extends TestCase
 {
     private function getTransformer(): AppointmentStatusTransformer
@@ -21,7 +23,7 @@ class AppointmentStatusTransformerTest extends TestCase
 
     public static function translateStatusProvider(): iterable
     {
-        yield 'cancelled' => [
+        yield 'aborted' => [
         [
             [
                 'gap_status' => 'AB'
@@ -105,7 +107,7 @@ class AppointmentStatusTransformerTest extends TestCase
         $result = $transformer->transformFilter($this->getMetaModel(), $filter);
 
         $expected = [
-            'gap_status' => ['CO'],
+            'gap_status' => 'CO'],
         ];
 
         $this->assertEquals($expected, $result);
@@ -131,7 +133,7 @@ class AppointmentStatusTransformerTest extends TestCase
 
         $result = $transformer->transformFilter($this->getMetaModel(), $filter);
         $expected = [
-            'gap_status' => ['CO'],
+            'gap_status' => 'CO',
         ];
         $this->assertEquals($expected, $result);
     }
