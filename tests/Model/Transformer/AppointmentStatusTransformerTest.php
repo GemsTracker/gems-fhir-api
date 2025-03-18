@@ -133,7 +133,7 @@ class AppointmentStatusTransformerTest extends TestCase
 
         $result = $transformer->transformFilter($this->getMetaModel(), $filter);
         $expected = [
-            'gap_status' => 'CO',
+            'gap_status' => ['CO'],
         ];
         $this->assertEquals($expected, $result);
     }
