@@ -7,6 +7,13 @@ use Zalt\Model\Transform\ModelTransformerAbstract;
 
 class ConsentCategoryTransformer extends ModelTransformerAbstract
 {
+    /**
+     * @param MetaModelInterface $model
+     * @param mixed[] $data
+     * @param bool $new
+     * @param bool $isPostData
+     * @return mixed[]
+     */
     public function transformLoad(MetaModelInterface $model, array $data, $new = false, $isPostData = false): array
     {
         foreach ($data as $key=>$row) {

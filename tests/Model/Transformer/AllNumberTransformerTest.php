@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Model\Transformer;
 
 use Gems\Api\Fhir\Model\Transformer\AllNumberTransformer;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Zalt\Model\MetaModelInterface;
 
+#[CoversClass(AllNumberTransformer::class)]
 class AllNumberTransformerTest extends TestCase
 {
     private function getMetaModel(): MetaModelInterface

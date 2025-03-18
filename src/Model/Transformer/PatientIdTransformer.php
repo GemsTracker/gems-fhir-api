@@ -42,6 +42,11 @@ class PatientIdTransformer extends ModelTransformerAbstract
         return $filter;
     }
 
+    /**
+     * @param int $organizationId
+     * @param mixed[] $filter
+     * @return int|null
+     */
     protected function getAllowedOrganization(int $organizationId, array $filter): int|null
     {
         if (!isset($filter['organization'])) {

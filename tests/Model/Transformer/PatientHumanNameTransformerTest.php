@@ -8,10 +8,12 @@ use Gems\Api\Fhir\Model\Transformer\PatientHumanNameTransformer;
 use Gems\Db\ResultFetcher;
 use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Sql\Expression;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Zalt\Model\MetaModelInterface;
 
+#[CoversClass(PatientHumanNameTransformer::class)]
 class PatientHumanNameTransformerTest extends TestCase
 {
     private function getMetaModel(): MetaModelInterface

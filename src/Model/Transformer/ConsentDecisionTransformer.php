@@ -7,7 +7,12 @@ use Zalt\Model\Transform\ModelTransformerAbstract;
 
 class ConsentDecisionTransformer extends ModelTransformerAbstract
 {
-    public function transformFilter(MetaModelInterface $model, array $filter)
+    /**
+     * @param MetaModelInterface $model
+     * @param mixed[] $filter
+     * @return mixed[]
+     */
+    public function transformFilter(MetaModelInterface $model, array $filter): array
     {
         if (isset($filter['decision'])) {
             if ($filter['decision'] === 'permit') {
@@ -21,6 +26,13 @@ class ConsentDecisionTransformer extends ModelTransformerAbstract
         return $filter;
     }
 
+    /**
+     * @param MetaModelInterface $model
+     * @param mixed[] $data
+     * @param bool $new
+     * @param bool $isPostData
+     * @return mixed[]
+     */
     public function transformLoad(MetaModelInterface $model, array $data, $new = false, $isPostData = false): array
     {
         foreach($data as $key=>$row) {
