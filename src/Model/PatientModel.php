@@ -6,6 +6,7 @@ use Gems\Api\Fhir\Model\Transformer\ManagingOrganizationTransformer;
 use Gems\Api\Fhir\Model\Transformer\PatientHumanNameTransformer;
 use Gems\Api\Fhir\Model\Transformer\PatientIdTransformer;
 use Gems\Api\Fhir\Model\Transformer\PatientTelecomTransformer;
+use Gems\Db\ResultFetcher;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
 use Gems\Model\Transform\MaskTransformer;
@@ -22,6 +23,7 @@ class PatientModel extends GemsJoinModel
         SqlRunnerInterface $sqlRunner,
         TranslatorInterface $translate,
         MaskRepository $maskRepository,
+        ResultFetcher $resultFetcher,
     ) {
         parent::__construct('gems__respondents', $metaModelLoader, $sqlRunner, $translate, 'respondents');
 
@@ -105,7 +107,7 @@ class PatientModel extends GemsJoinModel
 
         $metaModel->addTransformer(new MaskTransformer($maskRepository));
         $metaModel->addTransformer(new PatientIdTransformer());
-        $metaModel->addTransformer(new PatientHumanNameTransformer());
+        $metaModel->addTransformer(new PatientHumanNameTransformer($resultFetcher));
         $metaModel->addTransformer(new PatientTelecomTransformer());
         $metaModel->addTransformer(new ManagingOrganizationTransformer('gr2o_id_organization', true));
     }
