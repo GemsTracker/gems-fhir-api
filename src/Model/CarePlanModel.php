@@ -14,6 +14,7 @@ use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
 use Gems\Model\RespondentTrackFieldDataModel;
 use Gems\Model\Transform\MaskTransformer;
+use Gems\Repository\MailRepository;
 use Gems\Repository\StaffRepository;
 use Gems\Tracker;
 use Gems\User\Mask\MaskRepository;
@@ -33,6 +34,7 @@ class CarePlanModel extends GemsJoinModel
         protected readonly RespondentTrackFieldDataModel $respondentTrackFieldDataModel,
         protected readonly AgendaStaffRepository $agendaStaffRepository,
         protected readonly LocationRepository $locationRepository,
+        protected readonly MailRepository $mailRepository,
     )
     {
         parent::__construct('gems__respondent2track', $metaModelLoader, $sqlRunner, $translate, 'carePlan');
@@ -158,7 +160,8 @@ END'
         $this->metaModel->addTransformer(new CarePlanInfoTransformer(
             $this->respondentTrackFieldDataModel,
             $this->agendaStaffRepository,
-            $this->locationRepository
+            $this->locationRepository,
+            $this->mailRepository,
         ));
 
         $this->metaModel->addTransformer(new CarePlanActityTransformer($this->tracker));

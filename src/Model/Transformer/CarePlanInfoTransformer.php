@@ -7,6 +7,7 @@ use Gems\Agenda\Repository\AgendaStaffRepository;
 use Gems\Agenda\Repository\LocationRepository;
 use Gems\Api\Fhir\Endpoints;
 use Gems\Model\RespondentTrackFieldDataModel;
+use Gems\Repository\MailRepository;
 use Zalt\Model\MetaModelInterface;
 use Zalt\Model\Transform\ModelTransformerAbstract;
 
@@ -18,6 +19,7 @@ class CarePlanInfoTransformer extends ModelTransformerAbstract
         RespondentTrackFieldDataModel $respondentTrackFieldDataModel,
         AgendaStaffRepository $agendaStaffRepository,
         LocationRepository $locationRepository,
+        protected readonly MailRepository $mailRepository,
     )
     {
         $this->respondentTrackFieldsDataModel = $respondentTrackFieldDataModel;
@@ -69,6 +71,13 @@ class CarePlanInfoTransformer extends ModelTransformerAbstract
                 }
                 $info[] = $infoRow;
             }
+            $options = $this->mailRepository->getRespondentTrackMailCodes();
+            $info[] = [
+                'name' => 'contactable',
+                'type' => 'trackInfo',
+                'value' => (int)$row['gr2t_mailable'],
+                'description' => $options[$row['gr2t_mailable']] ?? '',
+            ];
 
             $data[$key]['supportingInfo'] = $info;
         }
