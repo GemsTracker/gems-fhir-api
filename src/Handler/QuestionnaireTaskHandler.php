@@ -7,6 +7,7 @@ use Gems\Api\Handlers\ModelRestHandler;
 use Gems\Api\Model\ModelApiHelper;
 use Gems\Audit\AuditLog;
 use Gems\Db\ResultFetcher;
+use Gems\Repository\TokenRepository;
 use Laminas\Db\Adapter\Adapter;
 use Mezzio\Helper\UrlHelper;
 use Psr\Http\Message\ResponseInterface;
@@ -28,6 +29,7 @@ class QuestionnaireTaskHandler extends ModelRestHandler
         ModelApiHelper $modelApiHelper,
         Adapter $db,
         protected readonly ResultFetcher $resultFetcher,
+        protected readonly TokenRepository $tokenRepository,
     ) {
         parent::__construct($eventDispatcher, $auditLog, $loader, $urlHelper, $modelApiHelper, $db);
     }
@@ -36,7 +38,7 @@ class QuestionnaireTaskHandler extends ModelRestHandler
     {
         $model = parent::createModel();
 
-        $model->getMetaModel()->addTransformer(new QuestionnaireTaskInfoTransformer($this->resultFetcher, $this->currentBaseUrl));
+        $model->getMetaModel()->addTransformer(new QuestionnaireTaskInfoTransformer($this->resultFetcher, $this->tokenRepository, $this->currentBaseUrl));
 
         return $model;
     }

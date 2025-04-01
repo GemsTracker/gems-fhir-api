@@ -4,6 +4,7 @@ namespace Gems\Api\Fhir\Model\Transformer;
 
 use Gems\Api\Fhir\Endpoints;
 use Gems\Db\ResultFetcher;
+use Gems\Repository\TokenRepository;
 use Zalt\Model\MetaModelInterface;
 use Zalt\Model\Transform\ModelTransformerAbstract;
 
@@ -21,6 +22,7 @@ class QuestionnaireTaskInfoTransformer extends ModelTransformerAbstract
 
     public function __construct(
         protected readonly ResultFetcher $resultFetcher,
+        protected readonly TokenRepository $tokenRepository,
         string|null $currentUri = null)
     {
         $this->currentUri = $currentUri ?? '/';
@@ -146,6 +148,20 @@ class QuestionnaireTaskInfoTransformer extends ModelTransformerAbstract
                     'id' => $row['gto_id_respondent_track'],
                     'reference' => Endpoints::CARE_PLAN . $row['gto_id_respondent_track'],
                     'display' => $row['gtr_track_name'],
+                ];
+            }
+
+            if (isset($row['ggp_name'])) {
+                $info[] = [
+                    'type' => 'answerer',
+                    'value' => $row['ggp_name'],
+                ];
+            }
+
+            if (isset($row['token_status'])) {
+                $info[] = [
+                    'type' => 'statusDescription',
+                    'value' => $this->tokenRepository->getTokenStatusShort($row['token_status'], $row['gto_completion_time'], $row['gto_valid_from'], $row['gto_valid_until']),
                 ];
             }
 

@@ -7,17 +7,14 @@ use Gems\Api\Fhir\Model\Transformer\ManagingOrganizationTransformer;
 use Gems\Api\Fhir\Model\Transformer\PatientReferenceTransformer;
 use Gems\Api\Fhir\Model\Transformer\QuestionnaireTaskExecutionPeriodTransformer;
 use Gems\Api\Fhir\Model\Transformer\QuestionnaireReferenceTransformer;
-use Gems\Api\Fhir\Model\Transformer\QuestionnaireTaskForTransformer;
-use Gems\Api\Fhir\Model\Transformer\QuestionnaireTaskInfoTransformer;
 use Gems\Api\Fhir\Model\Transformer\QuestionnaireOwnerTransformer;
 use Gems\Api\Fhir\Model\Transformer\QuestionnaireTaskStatusTransformer;
-use Gems\Db\ResultFetcher;
 use Gems\Model\GemsJoinModel;
 use Gems\Model\MetaModelLoader;
 use Gems\Model\Transform\MaskTransformer;
+use Gems\Repository\TokenRepository;
 use Gems\User\Mask\MaskRepository;
 use Laminas\Db\Sql\Expression;
-use Mezzio\Helper\UrlHelper;
 use Zalt\Base\TranslatorInterface;
 use Zalt\Model\Sql\SqlRunnerInterface;
 
@@ -51,10 +48,10 @@ class QuestionnaireTaskModel extends GemsJoinModel
             ['gto_id_respondent' => 'grr_id_respondent', 'gto_id_relation' => 'grr_id']
         );
 
-
         $this->addColumn(new Expression('\'QuestionnaireTask\''), 'resourceType');
         $this->addColumn(new Expression('\'routine\''), 'priority');
         $this->addColumn(new Expression('\'order\''), 'intent');
+        $this->addColumn(TokenRepository::getStatusExpression(), 'token_status');
 
         $metaModel->set('resourceType', [
             'label' => 'resourceType',
@@ -163,8 +160,19 @@ class QuestionnaireTaskModel extends GemsJoinModel
             'apiName' => 'roundOrder',
         ]);
 
+        $this->addFieldTranslators($metaModelLoader);
+
         $metaModel->addTransformer(new MaskTransformer($maskRepository));
         $this->addTransformers();
+    }
+
+    public function addFieldTranslators(MetaModelLoader $metaModelLoader): void
+    {
+        $translateSetting = ['translate' => true];
+        $this->metaModel->set('ggp_name', $translateSetting);
+        $this->metaModel->set('gsu_survey_name', $translateSetting);
+
+        $metaModelLoader->addDatabaseTranslations($this->metaModel);
     }
 
     protected function addTransformers(): void
@@ -176,4 +184,5 @@ class QuestionnaireTaskModel extends GemsJoinModel
         $this->metaModel->addTransformer(new ManagingOrganizationTransformer('gto_id_organization', true));
         $this->metaModel->addTransformer(new QuestionnaireReferenceTransformer('focus'));
     }
+
 }
