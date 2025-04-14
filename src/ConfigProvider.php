@@ -47,7 +47,7 @@ class ConfigProvider extends RestModelConfigProviderAbstract
     }
 
     /**
-     * @return string[]
+     * @return class-string[][]
      */
     public function getDependencies(): array
     {
