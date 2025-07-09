@@ -32,7 +32,7 @@ class PatientModel extends GemsJoinModel
         $this->addTable('gems__respondent2org', ['grs_id_user' => 'gr2o_id_user']);
         $this->addTable('gems__reception_codes', ['gr2o_reception_code' => 'grc_id_reception_code']);
 
-        $this->addTable('gems__organizations', ['gr2o_id_organization' => 'gor_id_organization'], 'gor', false);
+        $this->addTable('gems__organizations', ['gr2o_id_organization' => 'gor_id_organization'],  false);
 
         $this->addColumn(new Expression('CONCAT(gr2o_patient_nr, "@", gr2o_id_organization)'), 'id');
         //$this->addColumn('grc_success', 'active');
