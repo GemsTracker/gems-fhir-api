@@ -16,6 +16,7 @@ use Gems\Tracker;
 use Gems\User\Mask\MaskRepository;
 use Laminas\Db\Sql\Expression;
 use Zalt\Base\TranslatorInterface;
+use Zalt\Model\MetaModelInterface;
 use Zalt\Model\Sql\SqlRunnerInterface;
 
 class QuestionnaireResponseModel extends GemsJoinModel
@@ -72,12 +73,16 @@ class QuestionnaireResponseModel extends GemsJoinModel
             'label' => 'item',
         ]);
 
+        $this->addTransformers($metaModel, $maskRepository);
+    }
+
+    protected function addTransformers(MetaModelInterface $metaModel, MaskRepository $maskRepository)
+    {
         $metaModel->addTransformer(new MaskTransformer($maskRepository));
         $metaModel->addTransformer(new QuestionnaireResponseStatusTransformer());
         $metaModel->addTransformer(new PatientReferenceTransformer('subject'));
         $metaModel->addTransformer(new QuestionnaireOwnerTransformer('source'));
         $metaModel->addTransformer(new ManagingOrganizationTransformer('gto_id_organization', true, 'author'));
-        //$metaModel->addFilter(['gto_completion_time IS NOT NULL']);
 
         $metaModel->addTransformer(new QuestionnaireResponseItemsTransformer($this->tracker, $this->locale->getLanguage()));
     }
