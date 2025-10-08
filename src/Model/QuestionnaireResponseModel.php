@@ -76,7 +76,7 @@ class QuestionnaireResponseModel extends GemsJoinModel
         $this->addTransformers($metaModel, $maskRepository);
     }
 
-    protected function addTransformers(MetaModelInterface $metaModel, MaskRepository $maskRepository)
+    protected function addTransformers(MetaModelInterface $metaModel, MaskRepository $maskRepository): void
     {
         $metaModel->addTransformer(new MaskTransformer($maskRepository));
         $metaModel->addTransformer(new QuestionnaireResponseStatusTransformer());
