@@ -165,6 +165,13 @@ class QuestionnaireTaskInfoTransformer extends ModelTransformerAbstract
                 ];
             }
 
+            if ($row['gto_reception_code'] === 'paper') {
+                $info[] = [
+                    'type' => 'storage',
+                    'value' => 'paper',
+                ];
+            }
+
             $data[$key]['info'] = $info;
         }
 
