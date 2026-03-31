@@ -37,7 +37,9 @@ class ConfigProvider extends RestModelConfigProviderAbstract
     {
         return [
             'dependencies' => $this->getDependencies(),
-            'routes' => $this->routeGroup([
+            'routes' => $this->routeGroup(
+                'api',
+                [
                 'path' => $this->pathPrefix,
                 'middleware' => $this->getMiddleware(),
             ],
