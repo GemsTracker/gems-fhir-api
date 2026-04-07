@@ -41,7 +41,6 @@ class ConfigProvider extends RestModelConfigProviderAbstract
                 'api',
                 [
                 'path' => $this->pathPrefix,
-                'middleware' => $this->getMiddleware(),
             ],
                 $this->getRoutes()
             ),
