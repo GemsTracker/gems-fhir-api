@@ -20,7 +20,7 @@
     "gemstracker/gemstracker": "^2.0.26|2.x-dev",
     "phpunit/phpunit": "^10",
     "phpstan/phpstan": "^2.1",
-    "vimeo/psalm": "^5.8"
+    "vimeo/psalm": "^5.0|^6.1@dev"
   },
   "minimum-stability": "stable",
   "prefer-stable": true,

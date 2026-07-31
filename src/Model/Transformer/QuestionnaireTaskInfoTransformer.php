@@ -129,6 +129,11 @@ class QuestionnaireTaskInfoTransformer extends ModelTransformerAbstract
                 'value' => $loginUrl . '/ask/to-survey/' . $row['gto_id_token'],
             ];
 
+            $info[] = [
+                'type' => 'overviewUrl',
+                'value' => $loginUrl . '/respondent/overview/' . $row['gr2o_patient_nr'] . '/' . $row['gr2o_id_organization'] . '/' . $row['gto_id_track'] . '/' . $row['gto_round_description'],
+            ];
+
             if (isset($row['gto_id_track'])) {
                 $info[] = [
                     'type' => 'track',
@@ -184,16 +189,6 @@ class QuestionnaireTaskInfoTransformer extends ModelTransformerAbstract
      */
     protected function getLoginUrl(array $row): string
     {
-        /*if ($row['gor_url_base'] !== null) {
-            $baseUrls = explode(' ', $row['gor_url_base']);
-            if (array_key_exists('gor_url_base', $row)) {
-                $baseUrl = reset($baseUrls);
-                if (!empty($baseUrl)) {
-                    return $baseUrl;
-                }
-            }
-        }*/
-
         return $this->currentUri;
     }
 }
